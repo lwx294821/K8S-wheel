@@ -1,0 +1,22 @@
+topic: [team,project,task,storage]
+model:
+  task:   [name,type,responsibler,create_time,start_time,end_time,team_id,task_id, status,results,level]
+  person: [person_id,name,sex,skill,group,experience,level,team_id,condition]
+  team:   [name,label,team_id,project_id]
+  project: [name,type,level,project_id]
+view:
+  organization:
+    - structure: treeLay
+      model: [team,person]      
+      storage: local_file_json
+  work:
+    - inventory: poolLane
+      model: [task,team,project]
+      storage: local_file_json
+  kanban:
+    - dimension: month
+      model: [project]
+      storage: local_file_csv
+      
+    
+  
