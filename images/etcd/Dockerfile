@@ -1,1 +1,1 @@
-FROM gcr.io/google_containers/etcd:v3.2.24
+FROM mirrorgooglecontainers/etcd-amd64:3.2.26
