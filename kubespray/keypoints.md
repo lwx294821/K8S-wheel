@@ -7,7 +7,13 @@
 ```shell 
 # sudo pip install -r requirements.txt 
 ```
--   配置修改和执行部署
+-  Setting
+   -  支持IPV4
+   - ssh key拷贝到所有节点
+   - 关闭防火墙
+
+
+-  配置修改和执行部署
 ```shell
 # 移动样例文件夹
 cp -rfp inventory/sample inventory/mycluster
