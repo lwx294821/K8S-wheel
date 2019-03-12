@@ -1,1 +1,1 @@
-FROM mirrorgooglecontainers/etcd-amd64:3.2.26
+FROM quay.io/coreos/etcd:v3.2.4
