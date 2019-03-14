@@ -1,1 +1,1 @@
-FROM quay.io/coreos/etcd:v3.3.12
+FROM quay.io/coreos/etcd-amd64:v3.2.24
