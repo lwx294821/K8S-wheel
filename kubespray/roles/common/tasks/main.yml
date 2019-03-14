@@ -1,0 +1,37 @@
+---
+- name: Remove swapfile from /etc/fstab
+  mount:
+    name: swap
+    fstype: swap
+    state: absent
+  when: swap_disable|defaults(false)
+- name: Disable swap
+  command: swapoff -a
+  when: swap_disable|defaults(false)
+- name: Confirm selinux deployed
+  stat:
+    path: /etc/selinux/config
+  when: ansible_os_family == "RedHat"
+  register: slc
+- name: Disable SELinux
+  seliux:
+    state: disabled
+  register: se
+  tags:
+    - optimize
+    - selinux
+  when:
+    - ansible_os_family == "RedHat"
+    - slc.stat.exists == true
+    - selinux_disable
+- name: Reboot host and wait for it to return
+  shell: sleep 5 && shutdown -r now 'reboot for disable selinux'
+  async: 1
+  poll: 0
+  ignore_errors: true
+  when:
+    - selinux_disable
+    - se.reboot_required == True
+- name: Wait for the server to finish rebooting
+  wait_for_connection:
+    delay: 10
