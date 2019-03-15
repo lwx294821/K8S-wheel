@@ -1,13 +1,17 @@
 ---
 - hosts: localhost
   gather_facts: no
+  vars:
+     yum-repo: 'ftp://20.46.87.183/yum/custom/'
+     backup-path: /root/repo
   tasks:
     - name: Check remote machine OS
       setup:
-         gather_subset:
+        gather_subset:
           - '!all'
           - '!any'
           - facter
+        filter: ansible_*
       register: os
     - name: Debug os information
       debug:
@@ -38,6 +42,30 @@
       tags:
         - optimize
         - selinux
+    - name: start config yum
+      file:
+         path: {{backup-path|quote}}
+         state: directory 
+         mode: 0755
+    - name: backup yum config
+      shell: mv /etc/yum.repos.d/* {{backup-path |quote}} && cp {{backup-path | quote}}/CentOS-Media.repo /etc/yum.repos.d/         
+      any_errors_fatal: true
+      register: mv
+    - name: modify yum source address 
+      lineinfile:
+        path: /etc/yum.repos.d/CentOS-Media.repo
+        regexp: '^baseurl='
+        line: {{yum-repo |quote}}
+    - lineinfile:
+        path: /etc/yum.repos.d/CentOS-Media.repo
+        regexp: '^gpgcheck='
+        line: 'gpgcheck=0'
+    - lineinfile:
+        path: /etc/yum.repos.d/CentOS-Media.repo
+        regexp: '^enabled='
+        line: 'enabled=1'
+    - name: yum clean
+      shell: yum clean all && yum makecache             
     - name: reboot host and wait for it to return 
       shell: sleep 5 && shutdown -r now 'reboot for disable selinux'
       async: 1
@@ -47,6 +75,6 @@
         se.reboot_required == True
     - name: Wait for the server to finish rebooting
       wait_for_connection:
-        delay: 5
+        delay: 60
                      
     

@@ -1,0 +1,20 @@
+---
+- name: remove pip directory
+  file:
+    path: /root/.pip/
+    state: absent
+- name: create pip directory
+  file:
+    path: /root/.pip/
+    state: directory
+- name: copy file to remote
+  template: 
+    src: "pip-repos.j2"
+    dest: "/root/.pip/"
+    mode: 0755
+- name: install base packages
+  pip:
+    name: {{pip_base_packages}}
+- pip:
+    requirements: requirements.txt    
+ 

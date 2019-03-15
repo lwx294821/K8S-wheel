@@ -1,0 +1,6 @@
+---
+insecure_registry: '20.46.87.183:5000'
+docker_service_path: '/usr/lib/systemd/system/docker.service'
+docker_repository_check: true
+docker_repository_url: 'http://20.46.87.183:5000/v2/_catalog'
+docker_repository_check_log: '/root/docker_repository.log'

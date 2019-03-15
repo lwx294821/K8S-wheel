@@ -1,0 +1,4 @@
+---
+pip_index_url: 'http://192.168.139.202/pypi/packages/simple'
+pip_trusted_host: '192.168.139.202'
+pip_base_packages: []

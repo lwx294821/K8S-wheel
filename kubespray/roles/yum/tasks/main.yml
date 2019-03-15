@@ -1,0 +1,21 @@
+---
+- name: remove local yum
+  file:
+    path: /etc/yum.repos.d/
+    state: absent
+- name: create yum directory
+  file:
+    path: /etc/yum.repos.d/
+    state: directory
+- name: copy file to remote
+  template: 
+    src: "CentOS-Media.repo.js"
+    dest: "/etc/yum.repos.d/"
+    mode: 0755
+- name: yum clean and makecache
+  shell: yum clean all && yum makecache
+- name: install base packages
+  yum:
+    name: "{{yum_base_packages}}" 
+    state: present
+    update_cache: true  

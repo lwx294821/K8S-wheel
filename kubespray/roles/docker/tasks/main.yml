@@ -1,0 +1,22 @@
+---
+- name: Confirm docker installed
+  stat:
+    path: '{{docker_service_path}}'
+  register: dkr
+- name: Update docker server
+  lineinfile:
+    dest: "{{ docker_service_path}}"
+    regexp: '^ExecStart='
+    line: '/usr/bin/docked --insecure-registry {{insecure_registry}} '
+    backup: yes
+  when:
+    - dkr.stat.exists == true  
+  notify: restart docker
+- name: check docker
+  command: systemctl status docker
+
+- name: check docker repository
+  get_url:
+    url: {{docker_repository_url}}
+    dest: {{docker_repository_check_log}}
+  when: docker_repository_check    
