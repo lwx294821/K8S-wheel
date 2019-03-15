@@ -1,20 +1,57 @@
-topic: [team,project,task,storage]
+topic: [member,project,task,team]
 model:
-  task:   [name,type,responsibler,create_time,start_time,end_time,team_id,task_id, status,results,level]
-  person: [person_id,name,sex,skill,group,experience,level,team_id,condition]
-  team:   [name,label,team_id,project_id]
-  project: [name,type,level,project_id]
+  task: 
+    - id
+    - name
+    - module # study => 0,develop =>1,deploy => 2,test => 3,design => 4 
+    - create_time
+    - planned_finish_date
+    - start_time
+    - end_time
+    - state # queue => 0,pend => 1,finished => 2,cancel => 3,rework => 4
+    - result # success => 0,failed => 1,warning =>2
+    - level #high => 0,low => 1,middle => 2   
+  member:
+    - id
+    - name
+    - sex
+    - skill
+    - phone_number
+    - state
+    - role
+  team:
+    - name
+    - id
+    - state
+    - create_time       
+  project: 
+    - name
+    - owner
+    - level
+    - state
+    - stage
+structure:
+  project_task:
+    - project_id
+    - task_id
+    - stage
+  task_team:
+    - team_id
+    - task_id
+  team_member:
+    - team_id    
+    - member_id
 view:
   organization:
     - structure: treeLay
-      model: [team,person]      
+      model: [team,member]      
       storage: local_file_json
   work:
     - inventory: poolLane
       model: [task,team,project]
       storage: local_file_json
   kanban:
-    - dimension: month
+    - dimension: [week,month]
       model: [project]
       storage: local_file_csv
       
