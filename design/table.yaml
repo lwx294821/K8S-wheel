@@ -10,7 +10,7 @@ model:
     - end_time
     - state # queue => 0,pend => 1,finished => 2,cancel => 3,rework => 4
     - result # success => 0,failed => 1,warning =>2
-    - level #high => 0,low => 1,middle => 2   
+    - level # high => 0,low => 1,middle => 2   
   member:
     - id
     - name
