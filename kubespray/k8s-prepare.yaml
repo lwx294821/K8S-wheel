@@ -3,6 +3,7 @@
   gather_facts: false
   roles:
     - {role: "common", tags: "common"}
+    - {role: "file-distribution", tags: "file-distribution"}
     - {role: "yum", tags: "yum"}
     - {role: "pip",tags: "pip"}
     - {role: "docker",tags: "docker"}

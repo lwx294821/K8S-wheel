@@ -1,0 +1,4 @@
+---
+ntp_server:
+  active: "server 10.10.10.10 perfer"
+  standby: "server 10.10.10.10"

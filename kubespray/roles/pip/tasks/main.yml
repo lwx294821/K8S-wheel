@@ -3,18 +3,23 @@
   file:
     path: /root/.pip/
     state: absent
+  when: offline  
 - name: create pip directory
   file:
     path: /root/.pip/
     state: directory
+  when: offline  
 - name: copy file to remote
   template: 
     src: "pip-repos.j2"
     dest: "/root/.pip/"
     mode: 0755
+  when: offline  
 - name: install base packages
   pip:
     name: {{pip_base_packages}}
+  when: offline  
 - pip:
-    requirements: requirements.txt    
+    requirements: requirements.txt 
+  when: offline     
  

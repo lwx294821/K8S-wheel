@@ -1,0 +1,36 @@
+---
+# the same to kubespray defined in roles/download/defauls/main.yml
+local_release_dir: /tmp/releases
+image_arch: "{{host_architecture | default('amd64')}}"
+cni_version:  "v0.6.0"
+kubeadm_version: "v1.12.5"
+kube_version: "v1.12.5"
+files:
+  cni:
+    version: "{{ cni_version }}"
+    dest: "{{local_release_dir}}/cni-plugins-{{ image_arch }}-{{ cni_version }}.tgz"
+    unarchive: false
+    owner: "root"
+    mode: "0755"
+    groups:
+      - k8s-cluster
+
+  kubeadm: 
+    version: "{{ kubeadm_version }}"
+    dest: "{{local_release_dir}}/kubeadm"  
+    unarchive: false
+    owner: "root"
+    mode: "0755"
+    groups:
+      - k8s-cluster   
+
+  hyperkube_file:
+    version: "{{ kube_version }}"
+    dest: "{{local_release_dir}}/hyperkube"  
+    unarchive: false
+    owner: "root"
+    mode: "0755"
+    groups:
+      - k8s-cluster         
+
+

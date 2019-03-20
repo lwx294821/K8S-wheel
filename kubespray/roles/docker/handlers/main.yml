@@ -1,5 +1,5 @@
 ---
-- name: restart docker centos
+- name: restart docker if RedHat
   systemd:
     state: restarted
     daemon_reload: yes

@@ -1,8 +1,28 @@
 ---
+- name: Check Docker whether Ok
+  shell: systemctl status docker
+  register: docker_staus 
+- name: Install docker
+  yum:
+    name:
+      - "{{docker_version}}"
+    state: present
+    update_cache: yes
+  register: docker_task_result
+  until: docker_task_result is succeeded
+  retries: 2
+  when: docker_staus.rc != 0 
+
+- name: ensure service is started if docker packages are already present
+  service:
+    name: docker
+    state: started
+    
 - name: Confirm docker installed
   stat:
     path: '{{docker_service_path}}'
   register: dkr
+  
 - name: Update docker server
   lineinfile:
     dest: "{{ docker_service_path}}"

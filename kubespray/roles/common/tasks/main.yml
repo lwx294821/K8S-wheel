@@ -36,7 +36,8 @@
   systemd:
     name: firewalld
     state: stop
-    enabled: no  
+    enabled: no
+# reboot machine  ,    
 - name: Reboot host and wait for it to return
   shell: sleep 5 && shutdown -r now 'reboot for disable selinux'
   async: 1

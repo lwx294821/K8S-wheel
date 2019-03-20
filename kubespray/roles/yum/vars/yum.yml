@@ -1,3 +1,4 @@
 ---
 yum_repo_baseurl: 'ftp://192.168.139.202/yum-custom/'
 yum_base_packages: []
+offline: true
