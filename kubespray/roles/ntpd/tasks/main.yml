@@ -17,6 +17,7 @@
 - name: Adjust Time | Make sure ntpd service has been stopped
   service:
     name: ntpd
+    enabled: yes
     state: stopped
   when: ansible_os_family in ["RedHat"]
 - name: Include vars of ntp.yaml into the 'ntp'.

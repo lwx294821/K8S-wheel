@@ -1,0 +1,20 @@
+---
+host_k8s:
+  master01:
+   hostname: 'k8s-master01'
+   ip: '10.10.10.1'
+  master02:
+   hostname: 'k8s-master02'
+   ip: '10.10.10.2'
+  master03:
+   hostname: 'k8s-master03'
+   ip: '10.10.10.3'
+  node01:
+   hostname: 'k8s-node01'
+   ip: '10.10.10.4'
+  nod02:
+   hostname: 'k8s-node02'
+   ip: '10.10.10.5'
+  nod03:
+   hostname: 'k8s-node03'
+   ip: '10.10.10.6'

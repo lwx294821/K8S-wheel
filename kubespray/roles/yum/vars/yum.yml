@@ -1,4 +1,4 @@
 ---
 yum_repo_baseurl: 'ftp://192.168.139.202/yum-custom/'
-yum_base_packages: []
+yum_base_packages: ['git','net-tools','vim','ansible','gcc','python-pip','python-pip','python34','python34-pip']
 offline: true

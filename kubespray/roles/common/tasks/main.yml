@@ -9,6 +9,11 @@
 - name: Debug os information
   debug:
     msg: "{{ansible_os_family}}-{{ansible_distribution}}-{{ansible_distribution_version}}-{{ansible_architecture}}"    
+- name: update hostname 
+  shell: hostnamectl set-hostname {{hostname}}
+- name: update /etc/hosts
+  shell: echo "{{item.value.ip}} {{item.value.hostname}}" >> /etc/hosts
+  with_dict: "{{host_k8s}}" 
 - name: Remove swapfile from /etc/fstab
   mount:
     name: swap
@@ -37,6 +42,17 @@
     name: firewalld
     state: stop
     enabled: no
+- name: iptables
+  shell: modprobe br_netfilter
+- name:
+  shell: |
+    echo net.bridge.bridge-nf-call-ip6tables =    
+    echo net.bridge.bridge-nf-call-iptables = 1 >> /etc/sysctl.conf;
+    echo net.bridge.bridge-nf-call-arptables = 1 >> /etc/sysctl.conf
+- name:
+  shell: sysctl –p
+- name:
+  shell: sysctl -w net.ipv4.ip_forward=1  
 # reboot machine  ,    
 - name: Reboot host and wait for it to return
   shell: sleep 5 && shutdown -r now 'reboot for disable selinux'
