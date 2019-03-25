@@ -3,24 +3,19 @@
   file:
     path: /etc/yum.repos.d/
     state: absent
-  when: offline  
 - name: create yum directory
   file:
     path: /etc/yum.repos.d/
     state: directory
-  when:  offline  
 - name: copy file to remote
   template: 
     src: "CentOS-Media.repo.j2"
     dest: "/etc/yum.repos.d/"
     mode: 0755
-  when:  offline  
 - name: yum clean and makecache
   shell: yum clean all && yum makecache
-  when:  offline
 - name: install base packages
   yum:
     name: "{{yum_base_packages}}" 
     state: present
     update_cache: true
-  when:  offline    
