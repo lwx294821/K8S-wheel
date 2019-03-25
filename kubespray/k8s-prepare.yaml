@@ -1,9 +1,21 @@
----   
+---
+- hosts: localhost
+  gather_facts: false
+  roles:
+    - {role: "bastion", tags: "bastion"}
+
+- hosts: all
+  gather_facts: false
+  tasks:
+    - name: change hostname
+     shell: hostnamectl set-hostname {{hostname}}
+     when: hostname is defined and hostname !=""
+
 - hosts: all
   gather_facts: false
   roles:
-    - {role: "common", tags: "common"}
+    - {role: "base", tags: "base"}
     - {role: "file-distribution", tags: "file-distribution"}
     - {role: "yum", tags: "yum"}
     - {role: "pip",tags: "pip"}
-    - {role: "docker",tags: "docker"}
+    - {role: "ntpd",tags: "ntpd"}

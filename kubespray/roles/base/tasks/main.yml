@@ -18,19 +18,19 @@
     - optimize
     - selinux
   when:
-    - slc.stat.exists == true    
+    - slc.stat.exists == true
 - name: stop firewalld
   systemd:
     name: firewalld
     state: stop
     enabled: no
-# reboot machine    
+# reboot machine
 - name: Reboot host and wait for it to return
   shell: sleep 5 && shutdown -r now 'reboot for disable selinux'
-  async: 1
-  poll: 0
+  async: 300
+  poll: 10
   ignore_errors: true
-  when:  
+  when:
     - se.reboot_required == True
 - name: Wait for the server to finish rebooting
   wait_for_connection:
