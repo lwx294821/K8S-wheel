@@ -9,11 +9,13 @@
     state: directory
 - name: copy file to remote
   template: 
-    src: "CentOS-Media.repo.j2"
-    dest: "/etc/yum.repos.d/"
+    src: CentOS-Media.repo.j2
+    dest: "/etc/yum.repos.d/CentOS-Media.repo"
     mode: 0755
 - name: yum clean and makecache
-  shell: yum clean all && yum makecache
+  yum:
+    name: "*"
+    update_cache: yes  
 - name: install base packages
   yum:
     name: "{{yum_base_packages}}" 

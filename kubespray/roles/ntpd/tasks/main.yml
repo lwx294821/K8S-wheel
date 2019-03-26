@@ -11,7 +11,7 @@
     name: "{{ item }}"
     state: present
     with_items:
-      - ntp 
+      - ntp
       - ntpdate
   when: ansible_os_family in ["RedHat"]
 - name: Adjust Time | Make sure ntpd service has been stopped
@@ -24,8 +24,8 @@
   include_vars:
     file: ntp.yaml
     name: ntp
-- name: Set ntp server 
-  template: 
+- name: Set ntp server
+  template:
     src: "ntp.conf.j2"
     dest: "/etc/ntp.conf"
     mode: 0755
@@ -33,4 +33,4 @@
   service:
     name: ntpd
     state: started
-  when: ansible_os_family in ["RedHat"] 
+  when: ansible_os_family in ["RedHat"]

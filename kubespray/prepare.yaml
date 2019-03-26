@@ -1,7 +1,0 @@
-安装包:
- - 分支: release-2.8
-   tag: v2.8.3
-   链接: https://github.com/kubernetes-sigs/kubespray/tree/release-2.8
-   下载方式:
-     - git clone https://github.com/kubernetes-sigs/kubespray.git
-     - download zip

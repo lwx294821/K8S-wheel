@@ -275,7 +275,8 @@ class KubesprayInventory(object):
             except ValueError:
                 try:
                     with open(filename, 'r') as f:
-                        data = yaml.load(f, Loader=yaml.FullLoader)
+					    data = yaml.load(f)
+                        #data = yaml.load(f, Loader=yaml.FullLoader)
                 except ValueError:
                     raise Exception("Cannot read %s as JSON, YAML, or CSV",
                                     filename)

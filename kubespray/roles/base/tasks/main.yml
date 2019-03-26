@@ -11,7 +11,7 @@
     path: /etc/selinux/config
   register: slc
 - name: Disable SELinux
-  seliux:
+  selinux:
     state: disabled
   register: se
   tags:
@@ -22,16 +22,16 @@
 - name: stop firewalld
   systemd:
     name: firewalld
-    state: stop
+    state: stopped
     enabled: no
 # reboot machine
-- name: Reboot host and wait for it to return
-  shell: sleep 5 && shutdown -r now 'reboot for disable selinux'
-  async: 300
-  poll: 10
-  ignore_errors: true
-  when:
-    - se.reboot_required == True
-- name: Wait for the server to finish rebooting
-  wait_for_connection:
-    delay: 60
+#- name: Reboot host and wait for it to return
+#  shell: sleep 5 && shutdown -r now 'reboot for disable selinux'
+#  async: 1
+#  poll: 1
+#  ignore_errors: true
+#  when:
+#    - se.reboot_required == True
+#- name: Wait for the server to finish rebooting
+#  wait_for_connection:
+#    delay: 60

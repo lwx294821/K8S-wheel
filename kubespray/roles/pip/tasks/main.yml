@@ -10,11 +10,11 @@
 - name: copy file to remote
   template: 
     src: "pip-repos.j2"
-    dest: "/root/.pip/"
+    dest: "/root/.pip/pip.conf"
     mode: 0755
   when: offline  
 - name: install base packages
   pip:
-    name: {{pip_base_packages}}
+    name: "{{pip_base_packages}}"
 - pip:
     requirements: requirements.txt 
