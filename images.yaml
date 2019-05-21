@@ -1,4 +1,4 @@
-adocker.io/busybox: 1.29.2
+#docker.io/busybox: 1.29.2
 docker.io/calico/typha: v3.4.4
 docker.io/contiv/auth_proxy: 1.2.1
 k8s.gcr.io/cluster-proportional-autoscaler-amd64: 1.4.0
