@@ -1,0 +1,12 @@
+kubeadm:
+  dest: /tmp/releases/kubeadm
+  url:  https://storage.googleapis.com/kubernetes-release/release/v1.14.1/bin/linux/amd64/kubeadm
+calicoctl:
+  dest: /tmp/releases/calicoctl
+  url:  https://github.com/projectcalico/calicoctl/releases/download/v3.4.4/calicoctl-linux-amd64
+hyperkube_file:
+  dest: /tmp/releases/hyperkube
+  url:  https://storage.googleapis.com/kubernetes-release/release/v1.14.1/bin/linux/amd64/hyperkube
+cni:
+  dest: /tmp/releases/cni-plugins-amd64-v0.6.0.tgz
+  url:  https://github.com/containernetworking/plugins/releases/download/v0.6.0/cni-plugins-amd64-v0.6.0.tgz
