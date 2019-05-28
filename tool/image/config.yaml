@@ -1,0 +1,167 @@
+---
+dockerfile:
+  root_path: /root/download_containers/
+registry:
+  host: 192.168.176.128:5000
+dockerhub:
+  repository: d20190308/k8s-images
+images:
+  busybox:
+    repo: docker.io/busybox
+    tag: 1.29.2
+    download: true
+  calico_typha:
+    repo: docker.io/calico/typha
+    tag: v3.4.4
+    download: true
+  contiv_auth_proxy:
+    repo: docker.io/contiv/auth_proxy
+    tag: 1.2.1
+    download: true
+  dnsautoscaler:
+    repo: k8s.gcr.io/cluster-proportional-autoscaler-amd64
+    tag: 1.4.0
+  pod_infra:
+    repo: gcr.io/google_containers/pause-amd64
+    tag: 3.1
+  etcd:
+    repo: quay.io/coreos/etcd
+    tag: v3.2.26
+  helm:
+    repo: docker.io/lachlanevenson/k8s-helm
+    tag: v2.13.1
+    download: true
+  local_path_provisioner:
+    repo: docker.io/rancher/local-path-provisioner
+    tag: v0.0.2
+    download: true
+  rbd_provisioner:
+    repo: quay.io/external_storage/rbd-provisioner
+    tag: v2.1.1-k8s1.11
+  netcheck_server:
+    repo: quay.io/l23network/k8s-netchecker-server
+    tag: v1.0
+  registry_proxy:
+    repo: gcr.io/google_containers/kube-registry-proxy
+    tag: 0.4
+  weave_npc:
+    repo: docker.io/weaveworks/weave-npc
+    tag: 2.5.1
+    download: true
+  netcheck_agent:
+    repo: quay.io/l23network/k8s-netchecker-agent
+    tag: v1.0
+  flannel_cni:
+    repo: quay.io/coreos/flannel-cni
+    tag: v0.3.0
+  nginx:
+    repo: docker.io/nginx
+    tag: 1.15
+    download: true
+  tiller:
+    repo: gcr.io/kubernetes-helm/tiller
+    tag: v2.13.1
+  flannel:
+    repo: quay.io/coreos/flannel
+    tag: v0.11.0
+  calico_rr:
+    repo: docker.io/calico/routereflector
+    tag: v0.6.1
+    download: true
+  dashboard:
+    repo: gcr.io/google_containers/kubernetes-dashboard-amd64
+    tag: v1.10.1
+  local_volume_provisioner:
+    repo: quay.io/external_storage/local-volume-provisioner
+    tag: v2.1.0
+  testbox:
+    repo: docker.io/busybox
+    tag: latest
+    download: true
+  calico_policy:
+    repo: docker.io/calico/kube-controllers
+    tag: v3.4.0
+    download: true
+  cert_manager_controller:
+    repo: quay.io/jetstack/cert-manager-controller
+    tag: v0.5.2
+  nodelocaldns:
+    repo: k8s.gcr.io/k8s-dns-node-cache
+    tag: 1.15.1
+  contiv:
+    repo: docker.io/contiv/netplugin
+    tag: 1.2.1
+    download: true
+  contiv_etcd_init:
+    repo: docker.io/ferest/etcd-initer
+    tag: latest
+    download: true
+  ingress_nginx_controller:
+    repo: quay.io/kubernetes-ingress-controller/nginx-ingress-controller
+    tag: 0.21.0
+  multus:
+    repo: docker.io/nfvpe/multus
+    tag: v3.1.autoconf
+    download: true
+  kube_router:
+    repo: docker.io/cloudnativelabs/kube-router
+    tag: v0.2.5
+    download: true
+  cilium_init:
+    repo: docker.io/library/busybox
+    tag: 1.28.4
+    download: true
+  cephfs_provisioner:
+    repo: quay.io/external_storage/cephfs-provisioner
+    tag: v2.1.0-k8s1.11
+  addon_resizer:
+    repo: k8s.gcr.io/addon-resizer
+    tag: 1.8.3
+  calico_node:
+    repo: docker.io/calico/node
+    tag: v3.4.0
+    download: true
+  weave_kube:
+    repo: docker.io/weaveworks/weave-kube
+    tag: 2.5.1
+    download: true
+  registry:
+    repo: docker.io/registry
+    tag: 2.6
+    download: true
+  install_socat:
+    repo: docker.io/xueshanf/install-socat
+    tag: latest
+    download: true
+  metrics_server:
+    repo: gcr.io/google_containers/metrics-server-amd64
+    tag: v0.3.2
+  haproxy:
+    repo: docker.io/haproxy
+    tag: 1.9
+    download: true
+  coredns:
+    repo: docker.io/coredns/coredns
+    tag: 1.5.0
+    download: true
+  calico_cni:
+    repo: docker.io/calico/cni
+    tag: v3.4.0
+    download: true
+  cilium:
+   repo: docker.io/cilium/cilium
+   tag: v1.3.0
+   type: '0'
+  kube-apiserver:
+    repo: gcr.io/google-containers/kube-apiserver
+    tag: v1.14.1
+  kube-controller-manager:
+    repo: gcr.io/google-containers/kube-controller-manager
+    tag: v1.14.1
+  kube-proxy:
+    repo: gcr.io/google-containers/kube-proxy
+    tag: v1.14.1
+  kube-scheduler:
+    repo: gcr.io/google-containers/kube-scheduler
+    tag: v1.14.1
+
