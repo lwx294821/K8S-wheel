@@ -5,13 +5,22 @@
 
 
 import getopt
+import logging
 import os
 import subprocess
 import sys
+import time
 
 import yaml
 
-AVAILABLE_COMMANDS = ['help', 'dockerfile', 'download', 'register']
+from colorlog import ColoredLogger
+
+AVAILABLE_COMMANDS = ['help', 'dockerfile', 'download', 'register', 'load', 'save', 'clearall']
+REMOTE_REPOSITORY = ['k8s.gcr.io/', 'quay.io/', 'docker.io/', 'gcr.io/']
+
+logging.setLoggerClass(ColoredLogger)
+color_log = logging.getLogger(__name__)
+color_log.setLevel(logging.DEBUG)
 
 
 class K8SImages(object):
@@ -31,25 +40,31 @@ class K8SImages(object):
                 self.dockerfile(args)
             elif command == 'download':
                 self.download(args)
-            elif command == 'build':
-                self.build(args)
+            elif command == 'load':
+                self.load(args)
+            elif command == 'save':
+                self.save(args)
             elif command == 'register':
                 self.register(args)
+            elif command == 'clearall':
+                self.clearall(args)
             else:
-                raise Exception("Invalid command specified.")
+                color_log.warning("Invalid command specified.")
         except Exception as e:
-            print('Check required arguments and format:', e)
+            color_log.critical('Check required arguments and format:' + str(e))
             sys.exit(0)
 
     def show_help(self):
         help_text = '''Usage:python mirror.py download -f config.yaml
 
         Available commands:
-        help - Display this message
+        help - Display this message.
         dockerfile - Mkdir and generate Dockerfile to push github. Then you can build images on the DockerHub.
-        download - Download all kubespray images from DockerHub
-        build - According to the dockerfile which created by dockerfile command to build images.
+        download - Download all kubespray images from DockerHub.
+        load - load all images tar to Docker.
+        save - save all images to local.
         register - Read YAML to tag images for push to private registry.
+        clearall - Remove all images.
         
         Advanced usage:
         Not Support Now.
@@ -65,11 +80,13 @@ class K8SImages(object):
         [*] openpyxl==2.6.2
         [*] psutil==5.6.2
         [+] PyYAML==5.1
+        [+] colorama
          
-         pip install PyYAML
+         pip install PyYAML colorama
          
         '''
-        print(help_text)
+
+        color_log.debug(help_text)
 
     def dockerfile(self, filename=None):
         try:
@@ -88,7 +105,7 @@ class K8SImages(object):
                 os.makedirs(root_path + '/' + i)
             with open(save, "w", encoding="UTF-8") as f:
                 f.write('FROM ' + repo + ':' + str(tag))
-        print('Change Directory to "%s"' % root_path)
+        color_log.info('Change Directory to "%s"' % root_path)
 
     def download(self, filename=None):
         try:
@@ -98,47 +115,136 @@ class K8SImages(object):
             raise Exception("Cannot read %s as JSON, YAML, or CSV",
                             filename)
         repository = data.get('dockerhub')['repository']
+
         images = data.get('images')
         for i in images:
             if isinstance(images.get(i), dict):
                 if dict(images.get(i)).get('download') and images.get(i)['download']:
                     pull = 'docker pull %s:%s' % (images.get(i)['repo'], str(images.get(i)['tag']))
-                    print(pull)
-                    (status, output) = subprocess.getstatusoutput(pull)
-                    print(status, output)
+                    exec_command(pull, raise_exception=True, timeout=60)
                 else:
                     pull = 'docker pull %s:%s' % (repository, i)
-                    print(pull)
-                    (status, output) = subprocess.getstatusoutput(pull)
-                    print(status, output)
-
+                    if not exec_command(pull, raise_exception=True, timeout=120):
+                        continue
                     old_tag = '%s:%s' % (repository, i)
-                    new_tag = '%s:%s' % (images.get(i)['repo'], str(images.get(i)['tag']))
+                    new_tag = '%s:%s' % (hide_remote_repository(images.get(i)['repo']), str(images.get(i)['tag']))
                     tag = 'docker tag %s %s' % (old_tag, new_tag)
-                    print(tag)
-                    (status, output) = subprocess.getstatusoutput(tag)
-                    print(status, output)
-
+                    color_log.info(tag)
+                    subprocess.getstatusoutput(tag)
                     untag = 'docker rmi %s' % old_tag
-                    print(untag)
-                    (status, output) = subprocess.getstatusoutput(untag)
-                    print(status, output)
+                    color_log.info(untag)
+                    subprocess.getstatusoutput(untag)
 
-    def build(self, filename=None):
+    def save(self, filename=None):
         try:
             with open(filename, 'r') as f:
                 data = yaml.load(f, Loader=yaml.FullLoader)
         except ValueError:
             raise Exception("Cannot read %s as JSON, YAML, or CSV",
                             filename)
-        root_path = data.get('dockerfile')['root_path']
+        images_save_path = data.get('images_save_path')
+        if not images_save_path:
+            return
+        if not os.path.exists(images_save_path):
+            os.makedirs(images_save_path)
         images = data.get('images')
         for i in images:
-            path = root_path + i + '/Dockerfile'
-            b = 'docker build -f %s  .' % path
-            pout = subprocess.Popen(b, shell=True)
-            for line in pout:
-                print(line.strip().decode('utf-8'))
+            if isinstance(images.get(i), dict):
+                save_name = images_save_path + i + '.' + str(images.get(i)['tag']) + '.tar'
+                image_name = hide_remote_repository(images.get(i)['repo']) + ':' + str(images.get(i)['tag'])
+                cmd = 'docker save -o %s %s' % (save_name, image_name)
+                exec_command(cmd, raise_exception=True, timeout=0)
+
+    def load(self, filename=None):
+        try:
+            with open(filename, 'r') as f:
+                data = yaml.load(f, Loader=yaml.FullLoader)
+        except ValueError:
+            raise Exception("Cannot read %s as JSON, YAML, or CSV",
+                            filename)
+        images_load_path = data.get('images_load_path')
+        if not images_load_path:
+            return
+        images = data.get('images')
+        for i in images:
+            if isinstance(images.get(i), dict):
+                save_name = images_load_path + i + '.' + str(images.get(i)['tag']) + '.tar'
+                image_name = hide_remote_repository(images.get(i)['repo']) + ':' + str(images.get(i)['tag'])
+                l = 'docker load -i %s' % save_name
+                color_log.info(l)
+                image_id = check_image_id(image_name)
+                if image_id:
+                    t = 'docker tag %s %s' % (image_id, image_name)
+                    color_log.info(t)
+
+    def clearall(self, filename=None):
+        color_log.critical('remove all kubespray images')
+
+    def register(self, filename=None):
+        '''
+           REMOTE_REPOSITORY = ['k8s.gcr.io', 'k8s.gcr.io', 'docker.io']
+        '''
+        try:
+            with open(filename, 'r') as f:
+                data = yaml.load(f, Loader=yaml.FullLoader)
+        except ValueError:
+            raise Exception("Cannot read %s as JSON, YAML, or CSV",
+                            filename)
+        host = data.get('registry')['host']
+        tag = 'docker images -q |xargs docker inspect -f "{{index .RepoTags 0}}"'
+        color_log.info(tag)
+        (status, output) = subprocess.getstatusoutput(tag)
+        arr = output.split('\n')
+        if host:
+            images = data.get('images')
+            for i in images:
+                if isinstance(images.get(i), dict):
+                    repo = images.get(i)['repo']
+                    flag = repo + ':' + str(images.get(i)['tag'])
+                    tag = ''
+                    push = ''
+                    if flag in arr:
+                        new_tag = '%s/%s' % (host, hide_remote_repository(flag))
+                        tag = 'docker tag %s %s' % (flag, new_tag)
+                        push = 'docker push %s' % new_tag
+                    else:
+                        if isinstance(repo, str):
+                            r = repo.replace('docker.io/', '') + ':' + str(images.get(i)['tag'])
+                            if r in arr:
+                                new_tag = '%s/%s' % (host, r)
+                                tag = 'docker tag %s %s' % (r, new_tag)
+                                push = 'docker push %s' % new_tag
+                    if tag and push:
+                        color_log.info(tag)
+                        color_log.info(push)
+                        (status, output) = subprocess.getstatusoutput(tag)
+                        color_log.info(output)
+                        (status, output) = subprocess.getstatusoutput(push)
+                        color_log.info(output)
+
+
+def check_image_id(name=None):
+    if name:
+        check_id = 'docker inspect %s -f "{{ .Id }}"' % name
+        (status, output) = subprocess.getstatusoutput(check_id)
+        if status == 0:
+            if isinstance(output, str):
+                check_repo_tags = 'docker inspect %s -f "{{ .RepoTags }}"' % name
+                (tag_status, tag_output) = subprocess.getstatusoutput(check_repo_tags)
+                if isinstance(tag_output, str):
+                    tags = tag_output.replace('[', '').replace(']', '').split(' ')
+                    if name in tags:
+                        return ''
+                return output.replace('sha256:', '')
+        else:
+            color_log.error('status:%s\nimage:%s\nid:%s' % (status, name, output))
+            return ''
+
+
+def hide_remote_repository(arg):
+    for i in REMOTE_REPOSITORY:
+        if isinstance(arg, str) and arg.startswith(i):
+            return arg.replace(i, '')
 
 
 def options(argv):
@@ -147,7 +253,7 @@ def options(argv):
         opts, args = getopt.getopt(argv, "hf:", ["help", "file-from="])
 
     except getopt.GetoptError as e:
-        print(e)
+        color_log.error(e)
         sys.exit(2)
     for opt, arg in opts:
         if opt in ("-h", "--help"):
@@ -155,6 +261,33 @@ def options(argv):
         elif opt in ("-f", "--file-from"):
             c = arg
     return c
+
+
+def exec_command(cmd, raise_exception=False, timeout=5):
+    color_log.info(cmd)
+    if timeout == 0:
+        p = subprocess.Popen(cmd, stderr=subprocess.PIPE, stdout=subprocess.PIPE, shell=True)
+        (stdoutdata, stderrdata) = p.communicate()
+        if raise_exception and p.returncode != 0:
+            color_log.error('Execute cmd:%s failed.\nstdout:%s\nstderr:%s\n' % (cmd, stdoutdata, stderrdata))
+            return False
+        else:
+            return True
+    else:
+        p = subprocess.Popen(cmd, stderr=subprocess.PIPE, stdout=subprocess.PIPE, shell=True)
+        t_begin = time.time()
+        while True:
+            if p.poll() is not None:
+                color_log.info('Time consume: \033[1;34;40m %ss \033[0m' % int(time.time() - t_begin))
+                color_log.info(p.stdout.read().decode('UTF-8'))
+                break
+            seconds_passed = int(time.time() - t_begin)
+            if timeout and timeout < seconds_passed:
+                color_log.debug('Timeout:\033[1;34;40m %ss \033[0m,'
+                                ' Seconds_passed: \033[1;33;40m %ss \033[0m' % (timeout, seconds_passed))
+                p.terminate()
+                return False
+        return True
 
 
 def main(argv=None):
