@@ -18,6 +18,14 @@ from colorlog import ColoredLogger
 AVAILABLE_COMMANDS = ['help', 'dockerfile', 'download', 'register', 'load', 'save', 'clearall']
 REMOTE_REPOSITORY = ['k8s.gcr.io/', 'quay.io/', 'docker.io/', 'gcr.io/']
 
+_boolean_states = {'1': True, 'yes': True, 'true': True, 'on': True,
+                   '0': False, 'no': False, 'false': False, 'off': False}
+
+
+def get_var_as_bool(name, default=False):
+    return _boolean_states.get(name.lower(), default)
+
+
 logging.setLoggerClass(ColoredLogger)
 color_log = logging.getLogger(__name__)
 color_log.setLevel(logging.DEBUG)
@@ -27,6 +35,7 @@ class K8SImages(object):
     def __init__(self, command=None):
         if command and command[0] in AVAILABLE_COMMANDS:
             args = options(command[1:])
+            color_log.debug(args)
             self.parse_command(command[0], args)
 
         else:
@@ -88,13 +97,13 @@ class K8SImages(object):
 
         color_log.debug(help_text)
 
-    def dockerfile(self, filename=None):
+    def dockerfile(self, args=None):
         try:
-            with open(filename, 'r') as f:
+            with open(args.get('file'), 'r') as f:
                 data = yaml.load(f, Loader=yaml.FullLoader)
         except Exception:
             raise Exception("Cannot read %s as JSON, YAML, or CSV",
-                            filename)
+                            args.get('file'))
         root_path = data.get('dockerfile')['root_path']
         images = data.get('images')
         for i in images:
@@ -107,13 +116,13 @@ class K8SImages(object):
                 f.write('FROM ' + repo + ':' + str(tag))
         color_log.info('Change Directory to "%s"' % root_path)
 
-    def download(self, filename=None):
+    def download(self, args=None):
         try:
-            with open(filename, 'r') as f:
+            with open(args.get('file'), 'r') as f:
                 data = yaml.load(f, Loader=yaml.FullLoader)
         except ValueError:
             raise Exception("Cannot read %s as JSON, YAML, or CSV",
-                            filename)
+                            args.get('file'))
         repository = data.get('dockerhub')['repository']
 
         images = data.get('images')
@@ -135,13 +144,13 @@ class K8SImages(object):
                     color_log.info(untag)
                     subprocess.getstatusoutput(untag)
 
-    def save(self, filename=None):
+    def save(self, args=None):
         try:
-            with open(filename, 'r') as f:
+            with open(args.get("file"), 'r') as f:
                 data = yaml.load(f, Loader=yaml.FullLoader)
         except ValueError:
             raise Exception("Cannot read %s as JSON, YAML, or CSV",
-                            filename)
+                            args.get("file"))
         images_save_path = data.get('images_save_path')
         if not images_save_path:
             return
@@ -153,15 +162,18 @@ class K8SImages(object):
                 save_name = images_save_path + i + '.' + str(images.get(i)['tag']) + '.tar'
                 image_name = hide_remote_repository(images.get(i)['repo']) + ':' + str(images.get(i)['tag'])
                 cmd = 'docker save -o %s %s' % (save_name, image_name)
-                exec_command(cmd, raise_exception=True, timeout=0)
+                if not args.get('debug'):
+                    exec_command(cmd, raise_exception=True, timeout=0)
+                else:
+                    color_log.debug(cmd)
 
-    def load(self, filename=None):
+    def load(self, args=None):
         try:
-            with open(filename, 'r') as f:
+            with open(args.get('file'), 'r') as f:
                 data = yaml.load(f, Loader=yaml.FullLoader)
         except ValueError:
             raise Exception("Cannot read %s as JSON, YAML, or CSV",
-                            filename)
+                            args.get('file'))
         images_load_path = data.get('images_load_path')
         if not images_load_path:
             return
@@ -171,25 +183,32 @@ class K8SImages(object):
                 save_name = images_load_path + i + '.' + str(images.get(i)['tag']) + '.tar'
                 image_name = hide_remote_repository(images.get(i)['repo']) + ':' + str(images.get(i)['tag'])
                 l = 'docker load -i %s' % save_name
-                color_log.info(l)
+                if args.get('debug'):
+                    color_log.debug(l)
+                    continue
+                else:
+                    exec_command(l, raise_exception=True, timeout=0)
                 image_id = check_image_id(image_name)
                 if image_id:
                     t = 'docker tag %s %s' % (image_id, image_name)
-                    color_log.info(t)
+                    if args.get('debug'):
+                        color_log.debug(t)
+                    else:
+                        exec_command(t, raise_exception=True, timeout=0)
 
     def clearall(self, filename=None):
         color_log.critical('remove all kubespray images')
 
-    def register(self, filename=None):
+    def register(self, args=None):
         '''
            REMOTE_REPOSITORY = ['k8s.gcr.io', 'k8s.gcr.io', 'docker.io']
         '''
         try:
-            with open(filename, 'r') as f:
+            with open(args.get('file'), 'r') as f:
                 data = yaml.load(f, Loader=yaml.FullLoader)
         except ValueError:
             raise Exception("Cannot read %s as JSON, YAML, or CSV",
-                            filename)
+                            args.get('file'))
         host = data.get('registry')['host']
         tag = 'docker images -q |xargs docker inspect -f "{{index .RepoTags 0}}"'
         color_log.info(tag)
@@ -215,12 +234,16 @@ class K8SImages(object):
                                 tag = 'docker tag %s %s' % (r, new_tag)
                                 push = 'docker push %s' % new_tag
                     if tag and push:
-                        color_log.info(tag)
-                        color_log.info(push)
-                        (status, output) = subprocess.getstatusoutput(tag)
-                        color_log.info(output)
-                        (status, output) = subprocess.getstatusoutput(push)
-                        color_log.info(output)
+                        if args.get('debug'):
+                            color_log.debug(tag)
+                            color_log.debug(push)
+                        else:
+                            color_log.info(tag)
+                            color_log.info(push)
+                            (status, output) = subprocess.getstatusoutput(tag)
+                            color_log.info(output)
+                            (status, output) = subprocess.getstatusoutput(push)
+                            color_log.info(output)
 
 
 def check_image_id(name=None):
@@ -248,9 +271,9 @@ def hide_remote_repository(arg):
 
 
 def options(argv):
-    c = ''
+    c = {'debug':True}
     try:
-        opts, args = getopt.getopt(argv, "hf:", ["help", "file-from="])
+        opts, args = getopt.getopt(argv, "hf:d:", ["help", "file-from=", "debug="])
 
     except getopt.GetoptError as e:
         color_log.error(e)
@@ -259,7 +282,10 @@ def options(argv):
         if opt in ("-h", "--help"):
             pass
         elif opt in ("-f", "--file-from"):
-            c = arg
+            c.update(file=arg)
+        elif opt in ("-d", "--debug"):
+            c.update(debug=get_var_as_bool(arg))
+
     return c
 
 
