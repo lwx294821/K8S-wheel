@@ -35,7 +35,6 @@ class K8SImages(object):
     def __init__(self, command=None):
         if command and command[0] in AVAILABLE_COMMANDS:
             args = options(command[1:])
-            color_log.debug(args)
             self.parse_command(command[0], args)
 
         else:
@@ -130,19 +129,27 @@ class K8SImages(object):
             if isinstance(images.get(i), dict):
                 if dict(images.get(i)).get('download') and images.get(i)['download']:
                     pull = 'docker pull %s:%s' % (images.get(i)['repo'], str(images.get(i)['tag']))
-                    exec_command(pull, raise_exception=True, timeout=60)
+                    if args.get('debug'):
+                        color_log.debug(pull)
+                    else:
+                        exec_command(pull, raise_exception=True, timeout=60)
                 else:
                     pull = 'docker pull %s:%s' % (repository, i)
-                    if not exec_command(pull, raise_exception=True, timeout=120):
-                        continue
+                    if args.get('debug'):
+                        color_log.debug(pull)
+                    else:
+                        if not exec_command(pull, raise_exception=True, timeout=120):
+                            continue
                     old_tag = '%s:%s' % (repository, i)
                     new_tag = '%s:%s' % (hide_remote_repository(images.get(i)['repo']), str(images.get(i)['tag']))
                     tag = 'docker tag %s %s' % (old_tag, new_tag)
                     color_log.info(tag)
-                    subprocess.getstatusoutput(tag)
+                    if not args.get('debug'):
+                        subprocess.getstatusoutput(tag)
                     untag = 'docker rmi %s' % old_tag
                     color_log.info(untag)
-                    subprocess.getstatusoutput(untag)
+                    if not args.get('debug'):
+                        subprocess.getstatusoutput(untag)
 
     def save(self, args=None):
         try:
@@ -185,7 +192,6 @@ class K8SImages(object):
                 l = 'docker load -i %s' % save_name
                 if args.get('debug'):
                     color_log.debug(l)
-                    continue
                 else:
                     exec_command(l, raise_exception=True, timeout=0)
                 image_id = check_image_id(image_name)
@@ -196,8 +202,25 @@ class K8SImages(object):
                     else:
                         exec_command(t, raise_exception=True, timeout=0)
 
-    def clearall(self, filename=None):
-        color_log.critical('remove all kubespray images')
+    def clearall(self, args=None):
+        color_log.critical('remove all kubespray images and cannot undo!!!')
+        try:
+            with open(args.get('file'), 'r') as f:
+                data = yaml.load(f, Loader=yaml.FullLoader)
+        except ValueError:
+            raise Exception("Cannot read %s as JSON, YAML, or CSV",
+                            args.get('file'))
+        images = data.get('images')
+        for i in images:
+            if isinstance(images.get(i), dict):
+                image_name = hide_remote_repository(images.get(i)['repo']) + ':' + str(images.get(i)['tag'])
+                cmd = 'docker inspect  %s -f "{{ .Id }}" | sed "s/sha256://g" | xargs docker rmi -f ' % image_name
+                if args.get('debug'):
+                    color_log.debug(cmd)
+                else:
+                    color_log.info(cmd)
+                    (status, output) = subprocess.getstatusoutput(cmd)
+                    color_log.info(output)
 
     def register(self, args=None):
         '''
@@ -210,40 +233,41 @@ class K8SImages(object):
             raise Exception("Cannot read %s as JSON, YAML, or CSV",
                             args.get('file'))
         host = data.get('registry')['host']
-        tag = 'docker images -q |xargs docker inspect -f "{{index .RepoTags 0}}"'
-        color_log.info(tag)
-        (status, output) = subprocess.getstatusoutput(tag)
-        arr = output.split('\n')
         if host:
             images = data.get('images')
             for i in images:
                 if isinstance(images.get(i), dict):
                     repo = images.get(i)['repo']
-                    flag = repo + ':' + str(images.get(i)['tag'])
+                    flag = hide_remote_repository(repo + ':' + str(images.get(i)['tag']))
                     tag = ''
                     push = ''
-                    if flag in arr:
-                        new_tag = '%s/%s' % (host, hide_remote_repository(flag))
+                    if flag:
+                        new_tag = '%s/%s' % (host, flag)
                         tag = 'docker tag %s %s' % (flag, new_tag)
                         push = 'docker push %s' % new_tag
-                    else:
-                        if isinstance(repo, str):
-                            r = repo.replace('docker.io/', '') + ':' + str(images.get(i)['tag'])
-                            if r in arr:
-                                new_tag = '%s/%s' % (host, r)
-                                tag = 'docker tag %s %s' % (r, new_tag)
-                                push = 'docker push %s' % new_tag
                     if tag and push:
                         if args.get('debug'):
                             color_log.debug(tag)
                             color_log.debug(push)
                         else:
                             color_log.info(tag)
-                            color_log.info(push)
                             (status, output) = subprocess.getstatusoutput(tag)
                             color_log.info(output)
+
+                            color_log.info(push)
                             (status, output) = subprocess.getstatusoutput(push)
                             color_log.info(output)
+
+
+def check_image_tag(name=None):
+    cmd = 'docker inspect  %s -f "{{ .RepoTags }}"' % hide_remote_repository(name)
+    color_log.info(cmd)
+    (status, output) = subprocess.getstatusoutput(cmd)
+    if isinstance(output, str):
+        tags = output.replace('[', '').replace(']', '').split(' ')
+        if hide_remote_repository(name) in tags:
+            return True
+    return False
 
 
 def check_image_id(name=None):
@@ -256,6 +280,7 @@ def check_image_id(name=None):
                 (tag_status, tag_output) = subprocess.getstatusoutput(check_repo_tags)
                 if isinstance(tag_output, str):
                     tags = tag_output.replace('[', '').replace(']', '').split(' ')
+                    # 镜像tag满足格式规范，不需重新打tag
                     if name in tags:
                         return ''
                 return output.replace('sha256:', '')
@@ -265,13 +290,17 @@ def check_image_id(name=None):
 
 
 def hide_remote_repository(arg):
-    for i in REMOTE_REPOSITORY:
-        if isinstance(arg, str) and arg.startswith(i):
-            return arg.replace(i, '')
+    if isinstance(arg, str):
+        for i in REMOTE_REPOSITORY:
+            if not arg.startswith(i):
+                continue
+            else:
+                return arg.replace(i, '')
+    return None
 
 
 def options(argv):
-    c = {'debug':True}
+    c = {'debug': False}
     try:
         opts, args = getopt.getopt(argv, "hf:d:", ["help", "file-from=", "debug="])
 
