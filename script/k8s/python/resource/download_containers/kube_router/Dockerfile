@@ -1,0 +1,1 @@
+FROM docker.io/cloudnativelabs/kube-router:v0.2.5

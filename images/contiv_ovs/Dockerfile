@@ -1,1 +1,0 @@
-FROM contiv/ovs:latest
