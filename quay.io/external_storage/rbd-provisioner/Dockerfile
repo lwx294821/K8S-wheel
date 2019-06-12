@@ -1,1 +1,0 @@
-FROM quay.io/external_storage/rbd-provisioner:v2.1.1-k8s1.11

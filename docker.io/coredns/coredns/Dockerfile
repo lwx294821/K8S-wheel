@@ -1,1 +1,0 @@
-FROM docker.io/coredns/coredns:1.5.0

@@ -1,1 +1,0 @@
-FROM docker.io/registry:2.6

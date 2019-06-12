@@ -1,1 +1,0 @@
-FROM docker.io/library/busybox:1.28.4

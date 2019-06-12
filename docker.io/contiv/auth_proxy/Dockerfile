@@ -1,1 +1,0 @@
-FROM docker.io/contiv/auth_proxy:1.2.1

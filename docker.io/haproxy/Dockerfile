@@ -1,1 +1,0 @@
-FROM docker.io/haproxy:1.9

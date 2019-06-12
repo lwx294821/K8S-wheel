@@ -1,1 +1,0 @@
-FROM docker.io/contiv/netplugin:1.2.1
