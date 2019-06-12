@@ -1,0 +1,4 @@
+---
+os_architecture_check: true
+swap_disable: true
+selinux_disable: true

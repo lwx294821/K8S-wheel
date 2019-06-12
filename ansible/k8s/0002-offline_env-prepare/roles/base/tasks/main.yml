@@ -1,0 +1,37 @@
+---
+- name: Disable swap
+  command: swapoff -a
+- name: Remove swapfile from /etc/fstab
+  mount:
+    name: swap
+    fstype: swap
+    state: absent
+- name: Confirm selinux deployed
+  stat:
+    path: /etc/selinux/config
+  register: slc
+- name: Disable SELinux
+  selinux:
+    state: disabled
+  register: se
+  tags:
+    - optimize
+    - selinux
+  when:
+    - slc.stat.exists == true
+- name: stop firewalld
+  systemd:
+    name: firewalld
+    state: stopped
+    enabled: no
+# reboot machine
+#- name: Reboot host and wait for it to return
+#  shell: sleep 5 && shutdown -r now 'reboot for disable selinux'
+#  async: 1
+#  poll: 1
+#  ignore_errors: true
+#  when:
+#    - se.reboot_required == True
+#- name: Wait for the server to finish rebooting
+#  wait_for_connection:
+#    delay: 60

@@ -1,0 +1,36 @@
+---
+- name: Gather facter
+  setup:
+    gather_subset:
+      - '!all'
+      - '!any'
+      - facter
+    filter: ansible_*
+- name: Install ntp service
+  yum:
+    name: "{{ item }}"
+    state: present
+    with_items:
+      - ntp
+      - ntpdate
+  when: ansible_os_family in ["RedHat"]
+- name: Adjust Time | Make sure ntpd service has been stopped
+  service:
+    name: ntpd
+    enabled: yes
+    state: stopped
+  when: ansible_os_family in ["RedHat"]
+- name: Include vars of ntp.yaml into the 'ntp'.
+  include_vars:
+    file: ntp.yaml
+    name: ntp
+- name: Set ntp server
+  template:
+    src: "ntp.conf.j2"
+    dest: "/etc/ntp.conf"
+    mode: 0755
+- name: Adjust Time | Make sure ntpd service has been started
+  service:
+    name: ntpd
+    state: started
+  when: ansible_os_family in ["RedHat"]

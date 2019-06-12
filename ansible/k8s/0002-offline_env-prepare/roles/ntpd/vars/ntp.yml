@@ -1,0 +1,4 @@
+---
+ntp_server:
+  active: "server 192.168.211.129 perfer"
+  standby: "server 192.168.211.129"

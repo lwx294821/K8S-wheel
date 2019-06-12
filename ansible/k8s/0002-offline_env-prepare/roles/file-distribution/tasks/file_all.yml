@@ -1,0 +1,14 @@
+---
+- name: create file dest
+  file:
+    path: "{{file.dest}}"
+    state: directory
+- name: copy file     
+  copy:
+    src: "{{file.dest}}"
+    dest: "{{file.dest|dirname}}"
+    owner: "{{ file.owner|default(omit) }}"
+    mode: "{{ file.mode|default(omit) }}"  
+    backup: yes
+  
+    
