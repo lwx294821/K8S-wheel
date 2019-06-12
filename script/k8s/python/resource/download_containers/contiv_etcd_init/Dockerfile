@@ -1,0 +1,1 @@
+FROM docker.io/ferest/etcd-initer:latest
