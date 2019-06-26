@@ -1,0 +1,103 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: zk-svc
+  namespace: kube-elk
+spec:
+  ports:
+  - port: 2888
+    name: peer
+  - port: 3888
+    name: leader-election
+  clusterIP: None
+  selector:
+    app: zookeeper
+    storage: persistent
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: zk-inner
+  namespace: kube-elk
+spec:
+  ports:
+  - port: 2181
+    name: client
+  selector:
+    app: zookeeper
+    storage: persistent
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: zookeeper
+  namespace: kube-elk
+spec:
+  selector:
+    matchLabels:
+      app: zookeeper
+      storage: persistent
+  serviceName: "zk-svc"
+  replicas: 3
+  template:
+    metadata:
+      labels:
+        app: zookeeper
+        storage: persistent
+    spec:
+      terminationGracePeriodSeconds: 10
+      initContainers:
+      - name: init-config
+        image: reg.kolla.org/fluent/initkafka:vv1
+        command: ['/bin/bash', '/etc/kafka-configmap/init.sh']
+        volumeMounts:
+        - name: configmap
+          mountPath: /etc/kafka-configmap
+        - name: config
+          mountPath: /etc/kafka
+        - name: zk-data
+          mountPath: /var/lib/zookeeper/data
+      containers:
+      - name: zookeeper
+        image: reg.kolla.org/fluent/kafka1:vv1
+        env:
+        - name: KAFKA_LOG4J_OPTS
+          value: -Dlog4j.configuration=file:/etc/kafka/log4j.properties
+        command:
+        - ./bin/zookeeper-server-start.sh
+        - /etc/kafka/zookeeper.properties
+        ports:
+        - containerPort: 2181
+          name: client
+        - containerPort: 2888
+          name: peer
+        - containerPort: 3888
+          name: leader-election
+        resources:
+          requests:
+            cpu: 500m
+            memory: 1024Mi
+        readinessProbe:
+          exec:
+            command:
+            - /bin/sh
+            - -c
+            - '[ "imok" = "$(echo ruok | nc -w 1 -q 1 127.0.0.1 2181)" ]'
+        volumeMounts:
+        - name: config
+          mountPath: /etc/kafka
+        - name: zk-data
+          mountPath: /var/lib/zookeeper/data
+        - name: localtime
+          mountPath: /etc/localtime
+      volumes:
+      - name: configmap
+        configMap:
+          name: zookeeper-config
+      - name: config
+        emptyDir: {}
+      - name: zk-data
+        emptyDir: {}
+      - name: localtime
+        hostPath:
+          path: /etc/localtime

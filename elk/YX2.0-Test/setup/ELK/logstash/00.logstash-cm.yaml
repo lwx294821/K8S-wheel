@@ -1,0 +1,170 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: logstash-map
+  namespace: kube-elk
+  labels:
+    name: logstash-map
+data:
+  kafka-logstash-es.conf: |
+    input {
+        kafka {
+            bootstrap_servers => ["20.46.165.162:32022,20.46.165.149:32022,20.46.165.172:32022"]
+            topics => ["test"]
+            type => "k8s"
+        }
+        kafka {
+            bootstrap_servers => ["20.46.165.162:32022,20.46.165.149:32022,20.46.165.172:32022"]
+            topics => ["lsw"]
+            type => "nginx"
+        }
+    }
+    filter {
+        json {
+            source => "message"
+            remove_field => ["message"]
+            target => "Message"
+        }
+ 
+    }
+    output {
+        elasticsearch {
+            hosts => ["http://20.46.165.149:32092"]
+            action => "index"
+            index => "%{type}-%{+YYYY.MM.dd}"
+        }
+        #stdout {
+        #    codec => rubydebug
+        #}
+    }
+  jvm.options: |
+    -Xms1g
+    -Xmx1g
+    -XX:+UseParNewGC
+    -XX:+UseConcMarkSweepGC
+    -XX:CMSInitiatingOccupancyFraction=75
+    -XX:+UseCMSInitiatingOccupancyOnly
+    -Djava.awt.headless=true
+    -Dfile.encoding=UTF-8
+    -Djruby.compile.invokedynamic=true
+    -Djruby.jit.threshold=0
+    -XX:+HeapDumpOnOutOfMemoryError
+    -Djava.security.egd=file:/dev/urandom
+  log4j2.properties: |
+    status = error
+    name = LogstashPropertiesConfig
+
+    appender.console.type = Console
+    appender.console.name = plain_console
+    appender.console.layout.type = PatternLayout
+    appender.console.layout.pattern = [%d{ISO8601}][%-5p][%-25c] %m%n
+
+    appender.json_console.type = Console
+    appender.json_console.name = json_console
+    appender.json_console.layout.type = JSONLayout
+    appender.json_console.layout.compact = true
+    appender.json_console.layout.eventEol = true
+
+    appender.rolling.type = RollingFile
+    appender.rolling.name = plain_rolling
+    appender.rolling.fileName = ${sys:ls.logs}/logstash-${sys:ls.log.format}.log
+    appender.rolling.filePattern = ${sys:ls.logs}/logstash-${sys:ls.log.format}-%d{yyyy-MM-dd}-%i.log.gz
+    appender.rolling.policies.type = Policies
+    appender.rolling.policies.time.type = TimeBasedTriggeringPolicy
+    appender.rolling.policies.time.interval = 1
+    appender.rolling.policies.time.modulate = true
+    appender.rolling.layout.type = PatternLayout
+    appender.rolling.layout.pattern = [%d{ISO8601}][%-5p][%-25c] %-.10000m%n
+    appender.rolling.policies.size.type = SizeBasedTriggeringPolicy
+    appender.rolling.policies.size.size = 100MB
+
+    appender.json_rolling.type = RollingFile
+    appender.json_rolling.name = json_rolling
+    appender.json_rolling.fileName = ${sys:ls.logs}/logstash-${sys:ls.log.format}.log
+    appender.json_rolling.filePattern = ${sys:ls.logs}/logstash-${sys:ls.log.format}-%d{yyyy-MM-dd}-%i.log.gz
+    appender.json_rolling.policies.type = Policies
+    appender.json_rolling.policies.time.type = TimeBasedTriggeringPolicy
+    appender.json_rolling.policies.time.interval = 1
+    appender.json_rolling.policies.time.modulate = true
+    appender.json_rolling.layout.type = JSONLayout
+    appender.json_rolling.layout.compact = true
+    appender.json_rolling.layout.eventEol = true
+    appender.json_rolling.policies.size.type = SizeBasedTriggeringPolicy
+    appender.json_rolling.policies.size.size = 100MB
+
+
+    rootLogger.level = ${sys:ls.log.level}
+    rootLogger.appenderRef.console.ref = ${sys:ls.log.format}_console
+    rootLogger.appenderRef.rolling.ref = ${sys:ls.log.format}_rolling
+
+
+    appender.console_slowlog.type = Console
+    appender.console_slowlog.name = plain_console_slowlog
+    appender.console_slowlog.layout.type = PatternLayout
+    appender.console_slowlog.layout.pattern = [%d{ISO8601}][%-5p][%-25c] %m%n
+
+    appender.json_console_slowlog.type = Console
+    appender.json_console_slowlog.name = json_console_slowlog
+    appender.json_console_slowlog.layout.type = JSONLayout
+    appender.json_console_slowlog.layout.compact = true
+    appender.json_console_slowlog.layout.eventEol = true
+
+    appender.rolling_slowlog.type = RollingFile
+    appender.rolling_slowlog.name = plain_rolling_slowlog
+    appender.rolling_slowlog.fileName = ${sys:ls.logs}/logstash-slowlog-${sys:ls.log.format}.log
+    appender.rolling_slowlog.filePattern = ${sys:ls.logs}/logstash-slowlog-${sys:ls.log.format}-%d{yyyy-MM-dd}-%i.log.gz
+    appender.rolling_slowlog.policies.type = Policies
+    appender.rolling_slowlog.policies.time.type = TimeBasedTriggeringPolicy
+    appender.rolling_slowlog.policies.time.interval = 1
+    appender.rolling_slowlog.policies.time.modulate = true
+    appender.rolling_slowlog.layout.type = PatternLayout
+    appender.rolling_slowlog.layout.pattern = [%d{ISO8601}][%-5p][%-25c] %.10000m%n
+    appender.rolling_slowlog.policies.size.type = SizeBasedTriggeringPolicy
+    appender.rolling_slowlog.policies.size.size = 100MB
+
+    appender.json_rolling_slowlog.type = RollingFile
+    appender.json_rolling_slowlog.name = json_rolling_slowlog
+    appender.json_rolling_slowlog.fileName = ${sys:ls.logs}/logstash-slowlog-${sys:ls.log.format}.log
+    appender.json_rolling_slowlog.filePattern = ${sys:ls.logs}/logstash-slowlog-${sys:ls.log.format}-%d{yyyy-MM-dd}-%i.log.gz
+    appender.json_rolling_slowlog.policies.type = Policies
+    appender.json_rolling_slowlog.policies.time.type = TimeBasedTriggeringPolicy
+    appender.json_rolling_slowlog.policies.time.interval = 1
+    appender.json_rolling_slowlog.policies.time.modulate = true
+    appender.json_rolling_slowlog.layout.type = JSONLayout
+    appender.json_rolling_slowlog.layout.compact = true
+    appender.json_rolling_slowlog.layout.eventEol = true
+    appender.json_rolling_slowlog.policies.size.type = SizeBasedTriggeringPolicy
+    appender.json_rolling_slowlog.policies.size.size = 100MB
+
+    logger.slowlog.name = slowlog
+    logger.slowlog.level = trace
+    logger.slowlog.appenderRef.console_slowlog.ref = ${sys:ls.log.format}_console_slowlog
+    logger.slowlog.appenderRef.rolling_slowlog.ref = ${sys:ls.log.format}_rolling_slowlog
+    logger.slowlog.additivity = false
+  startup.options: |
+    LS_HOME=/usr/share/logstash
+
+    LS_SETTINGS_DIR=/usr/share/logstash/config
+
+    LS_OPTS="--path.settings ${LS_SETTINGS_DIR}"
+
+    LS_JAVA_OPTS=""
+
+    LS_PIDFILE=/var/run/logstash.pid
+
+    LS_USER=logstash
+    LS_GROUP=logstash
+
+    LS_GC_LOG_FILE=/var/log/logstash/gc.log
+
+    LS_OPEN_FILES=16384
+
+    LS_NICE=19
+
+    SERVICE_NAME="logstash"
+    SERVICE_DESCRIPTION="logstash"
+  logstash.yml: |
+    path.data: /usr/share/logstash/data
+    path.logs: /usr/share/logstash/data/logs
+    xpack.monitoring.elasticsearch.url: ["http://20.46.165.149:32092"]
+

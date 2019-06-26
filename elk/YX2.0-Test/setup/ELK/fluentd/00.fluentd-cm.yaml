@@ -1,0 +1,120 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: fluentd-conf
+  namespace: kube-elk
+  labels:
+    name: fluentd-etc
+data:
+  fluent.conf: |
+    <source>
+      @type exec
+      command "rm -rf /fluentd/etc/fluentdVersion.txt;fluentd --version >> /fluentd/fluentdVersion.txt"
+      keys @version
+      tag version.log
+      #run_interval 10s
+    </source>
+    <source>
+      @type exec
+      command "rm -rf /fluentd/etc/platform.txt;cat /proc/version >> /fluentd/platform.txt"
+      keys @version
+      tag version.log
+      #run_interval 10s
+    </source>
+    <source>
+      @type tail
+      path /var/log/pods/*/*/*
+      exclude_path /var/log/pods/*/*fluentd-logging*/*
+      #path /var/log/pods/*/*fluentd-logging*/*
+      pos_file /fluentd/log.log.pos
+      tag foo.bar.msg
+      path_key source
+      <parse>
+        @type none
+      </parse>
+    </source>
+    <filter foo.bar.msg>          
+      @type record_transformer   
+      <record>
+        input_type log                   
+        default_topic k8s
+        hostname "#{Socket.gethostname}"
+        ip "#{IPSocket.getaddress(Socket.gethostname)}"
+      </record>                  
+    </filter>    
+    <filter foo.bar.msg>
+      @type script
+      path /fluentd/etc/example.rb
+    </filter>
+    <match foo.bar.msg>
+      @type kafka
+      brokers 20.46.165.149:32022,20.46.165.162:32022,20.46.165.172:32022
+      #default_topic k8s
+      default_topic test
+    </match>
+
+  example.rb: |
+    require 'json'
+    def filter(tag, time, record)
+      case tag
+      when /.+\.code$/
+        code(record)
+      when /.+\.msg$/
+        message(record)
+      end
+    end
+
+    def code(record)
+      if record.has_key?("key1")
+        record["code"] = record["key1"].to_i
+        record.delete("key1")
+      end
+      record
+    end
+
+    def message(record)
+      #puts "==================fluentdVersion.txt====================="
+      File.open("/fluentd/fluentdVersion.txt","r").each_line do |line|
+        record["@version"] = line.chomp
+      end
+      #puts "==================platform.txt====================="
+      File.open("/fluentd/platform.txt","r").each_line do |line|
+        record["platform"] = line.chomp.split('(')[0]
+      end
+
+      messtr = record["message"]
+      obj = JSON.parse(messtr)
+      mess1 = obj['log']
+      mess2 = obj['time'][0 .. -8]+"Z"
+      ss = record["source"].split('/')[-2]
+
+      record["message"] = mess1
+      record["time"] = mess2
+      record["application"] = ss
+
+      file_path = '/var/lib/docker/containers'                      
+      dictname = []                                                 
+      old_dir(file_path,dictname)                                   
+      dictname.each{|item|                                          
+      if item.to_s.include?(ss.to_s)                              
+        record["identifier"] = ss+"/"+item                       
+      end                                                 
+      }
+      record
+    end
+    def old_dir(file_path,dictname)                    
+      if File.directory? file_path                     
+        Dir.foreach(file_path) do |file|               
+          if file !="." and file != ".."             
+            old_dir(file_path+"/"+file,dictname)   
+          end                                        
+        end                                         
+      else                                          
+        if File.basename(file_path) == "config.v2.json"
+          json = File.read(file_path)                  
+          obj = JSON.parse(json)                       
+          str = obj['Config']['Labels']['io.kubernetes.pod.name']
+          dictname << str                                        
+        end                                                      
+      end                                                        
+    end

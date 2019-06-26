@@ -1,0 +1,67 @@
+apiVersion: apps/v1beta1
+kind: StatefulSet
+metadata:
+  name: kafka
+  namespace: kube-elk
+spec:
+  replicas: 3
+  serviceName: "kafka"
+  template:
+    metadata: 
+      name: kafka
+      labels: 
+        app: kafka
+    spec:
+      containers: 
+       - name: kafka
+         image: reg.kolla.org/yx20/kafka:2.11-2.0.0
+         ports:
+          - containerPort: 9092
+         command:
+           - /bin/bash
+           - -c
+           - "exec /opt/kafka/bin/kafka-server-start.sh /opt/kafka/config/server.properties  --override zookeeper.connect=zk-inner:2181  --override broker.id=${HOSTNAME##*-}  --override delete.topic.enable=true  --override listeners=PLAINTEXT://:9092 --override auto.create.topics.enable=true  --override advertised.listeners=PLAINTEXT://${POD_IP}:9092  --override log.dir=/var/lib/kafka" 
+         env:
+           - name: KAFKA_ZOOKEEPER_CONNECT
+             value: zk-inner:2181
+           - name: KAFKA_HEAP_OPTS
+             value: "-Xmx1024M -Xms1024M"
+           - name: POD_IP
+             valueFrom:
+               fieldRef:
+                 fieldPath: status.podIP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: kafka
+  labels:
+    app: kafka
+  namespace: kube-logs
+spec:
+  clusterIP: None
+  ports:
+  - name: client
+    port: 9092
+    protocol: TCP
+    targetPort: 9092
+  selector:
+    app: kafka
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: kafka-publish
+  labels:
+    app: kafka
+  namespace: kube-logs
+spec:
+  type: NodePort
+  ports:
+  - name: client
+    port: 9092
+    protocol: TCP
+    targetPort: 9092
+    nodePort: 32022
+  selector:
+    app: kafka

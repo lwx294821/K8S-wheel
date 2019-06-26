@@ -1,0 +1,1181 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+    <title>可视化验证点</title>
+    <link href="static/main.css" rel="stylesheet" type="text/css">
+</head>
+<style>
+    input[type=submit], button, a.button {
+    background: #fff;
+    color: #171515 !important;
+    border: 0;
+}
+
+</style>
+<body>
+<div id="outer">
+    <div id="header">
+        <ul id="topnav">
+            <li id="interval">
+                <label for="update-every" id="status"><span class="status-ok">Refreshed 2019-06-21 14:37:57</span>
+                </label>
+                <select id="update-every">
+                    <option value="5000" selected="selected">Refresh every 5 seconds</option>
+                    <option value="10000">Refresh every 10 seconds</option>
+                    <option value="30000">Refresh every 30 seconds</option>
+                    <option value="">Do not refresh</option>
+                </select>
+            </li>
+        </ul>
+        <div id="logo">
+            <a href=" #" style="font-size:40px;">数据可视化</a>
+            <span id="versions"><abbr
+                    title="Available exchange types: direct, fanout, headers, topic">营销2.0技术验证</abbr><abbr
+                    title="Erlang/OTP 21 [erts-10.3.5.1] [source] [64-bit] [smp:1:1] [ds:1:1:10] [async-threads:64] [hipe]">Time 2019.06.21</abbr></span>
+        </div>
+        <div id="menu">
+            <ul id="tabs">
+                <li><a href=" #/" class="selected">概况</a></li>
+                <li><a href=" #/connections">同步</a></li>
+                <li><a href=" #/channels">缓存</a></li>
+                <li><a href=" #/exchanges">负载均衡</a></li>
+                <li><a href=" #/queues">性能</a></li>
+                <li><a href=" #/users">自动化部署</a></li>
+                <li><a href=" #/users">日志监控</a></li>
+            </ul>
+        </div>
+    </div>
+    <div id="rhs"></div>
+    <div id="main" class="">
+        <h1>概况</h1>
+        <div class="updatable"></div>
+        <div class="updatable"></div>
+        <div class="section section-visible">
+            <h2 style="background: #666;color: #fff;">动态统计图</h2>
+            <div class="hider updatable" style="display:block;">
+                <h3>Queued messages
+
+                </h3>
+                <div class="box">
+                    <div id="chart-lengths-over" class="chart chart-full chart-small"
+                         style="padding: 0px; position: relative;">
+                        <canvas class="flot-base"
+                                style="direction: ltr; position: absolute; left: 0px; top: 0px; width: 400px; height: 100px;"
+                                width="600" height="150"></canvas>
+                        <div class="flot-text"
+                             style="position: absolute; inset: 0px; font-size: smaller; color: rgb(84, 84, 84);">
+                            <div class="flot-x-axis flot-x1-axis xAxis x1Axis"
+                                 style="position: absolute; inset: 0px; display: block;">
+                                <div style="position: absolute; max-width: 57px; top: 86px; left: 32px; text-align: center;"
+                                     class="flot-tick-label tickLabel">14:37:00
+                                </div>
+                                <div style="position: absolute; max-width: 57px; top: 86px; left: 96px; text-align: center;"
+                                     class="flot-tick-label tickLabel">14:37:10
+                                </div>
+                                <div style="position: absolute; max-width: 57px; top: 86px; left: 160px; text-align: center;"
+                                     class="flot-tick-label tickLabel">14:37:20
+                                </div>
+                                <div style="position: absolute; max-width: 57px; top: 86px; left: 223px; text-align: center;"
+                                     class="flot-tick-label tickLabel">14:37:30
+                                </div>
+                                <div style="position: absolute; max-width: 57px; top: 86px; left: 287px; text-align: center;"
+                                     class="flot-tick-label tickLabel">14:37:40
+                                </div>
+                                <div style="position: absolute; max-width: 57px; top: 86px; left: 351px; text-align: center;"
+                                     class="flot-tick-label tickLabel">14:37:50
+                                </div>
+                            </div>
+                            <div class="flot-y-axis flot-y1-axis yAxis y1Axis"
+                                 style="position: absolute; inset: 0px; display: block;">
+                                <div style="position: absolute; top: 75px; left: 2px; text-align: right;"
+                                     class="flot-tick-label tickLabel">0.0
+                                </div>
+                                <div style="position: absolute; top: 51px; left: 2px; text-align: right;"
+                                     class="flot-tick-label tickLabel">0.5
+                                </div>
+                                <div style="position: absolute; top: 26px; left: 2px; text-align: right;"
+                                     class="flot-tick-label tickLabel">1.0
+                                </div>
+                                <div style="position: absolute; top: 2px; left: 2px; text-align: right;"
+                                     class="flot-tick-label tickLabel">1.5
+                                </div>
+                            </div>
+                        </div>
+                        <canvas class="flot-overlay"
+                                style="direction: ltr; position: absolute; left: 0px; top: 0px; width: 400px; height: 100px;"
+                                width="600" height="150"></canvas>
+                    </div>
+                    <table class="legend"></table>
+                    <table class="legend">
+                        <tbody>
+                        <tr>
+                            <th><span title="Click to toggle line" class="rate-visibility-option"
+                                      data-pref="chart-line-lengths-overmessages_ready">Ready</span></th>
+                            <td>
+                                <div class="colour-key" style="background: #edc240;"></div>
+                                0
+                            </td>
+                        </tr>
+                        <tr>
+                            <th><span title="Click to toggle line" class="rate-visibility-option"
+                                      data-pref="chart-line-lengths-overmessages_unacknowledged">Unacked</span></th>
+                            <td>
+                                <div class="colour-key" style="background: #afd8f8;"></div>
+                                0
+                            </td>
+                        </tr>
+                        <tr>
+                            <th><span title="Click to toggle line" class="rate-visibility-option"
+                                      data-pref="chart-line-lengths-overmessages">Total</span></th>
+                            <td>
+                                <div class="colour-key" style="background: #cb4b4b;"></div>
+                                0
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <h3>Message rates <span class="popup-options-link" title="Click to change" type="rate"
+                                        for="msg-rates-over">last minute</span></h3>
+                <div class="box">
+                    <div id="chart-msg-rates-over" class="chart chart-full chart-small chart-rates"
+                         style="padding: 0px; position: relative;">
+                        <canvas class="flot-base"
+                                style="direction: ltr; position: absolute; left: 0px; top: 0px; width: 400px; height: 100px;"
+                                width="600" height="150"></canvas>
+                        <div class="flot-text"
+                             style="position: absolute; inset: 0px; font-size: smaller; color: rgb(84, 84, 84);">
+                            <div class="flot-x-axis flot-x1-axis xAxis x1Axis"
+                                 style="position: absolute; inset: 0px; display: block;">
+                                <div style="position: absolute; max-width: 57px; top: 86px; left: 41px; text-align: center;"
+                                     class="flot-tick-label tickLabel">14:37:00
+                                </div>
+                                <div style="position: absolute; max-width: 57px; top: 86px; left: 103px; text-align: center;"
+                                     class="flot-tick-label tickLabel">14:37:10
+                                </div>
+                                <div style="position: absolute; max-width: 57px; top: 86px; left: 165px; text-align: center;"
+                                     class="flot-tick-label tickLabel">14:37:20
+                                </div>
+                                <div style="position: absolute; max-width: 57px; top: 86px; left: 227px; text-align: center;"
+                                     class="flot-tick-label tickLabel">14:37:30
+                                </div>
+                                <div style="position: absolute; max-width: 57px; top: 86px; left: 289px; text-align: center;"
+                                     class="flot-tick-label tickLabel">14:37:40
+                                </div>
+                                <div style="position: absolute; max-width: 57px; top: 86px; left: 351px; text-align: center;"
+                                     class="flot-tick-label tickLabel">14:37:50
+                                </div>
+                            </div>
+                            <div class="flot-y-axis flot-y1-axis yAxis y1Axis"
+                                 style="position: absolute; inset: 0px; display: block;">
+                                <div style="position: absolute; top: 75px; left: 2px; text-align: right;"
+                                     class="flot-tick-label tickLabel">0.0/s
+                                </div>
+                                <div style="position: absolute; top: 60px; left: 2px; text-align: right;"
+                                     class="flot-tick-label tickLabel">0.1/s
+                                </div>
+                                <div style="position: absolute; top: 46px; left: 2px; text-align: right;"
+                                     class="flot-tick-label tickLabel">0.1/s
+                                </div>
+                                <div style="position: absolute; top: 31px; left: 2px; text-align: right;"
+                                     class="flot-tick-label tickLabel">0.2/s
+                                </div>
+                                <div style="position: absolute; top: 17px; left: 2px; text-align: right;"
+                                     class="flot-tick-label tickLabel">0.2/s
+                                </div>
+                                <div style="position: absolute; top: 2px; left: 2px; text-align: right;"
+                                     class="flot-tick-label tickLabel">0.3/s
+                                </div>
+                            </div>
+                        </div>
+                        <canvas class="flot-overlay"
+                                style="direction: ltr; position: absolute; left: 0px; top: 0px; width: 400px; height: 100px;"
+                                width="600" height="150"></canvas>
+                    </div>
+                    <table class="legend"></table>
+                    <table class="legend">
+                        <tbody>
+                        <tr>
+                            <th><span title="Click to toggle line" class="rate-visibility-option"
+                                      data-pref="chart-line-msg-rates-overpublish">Publish</span></th>
+                            <td>
+                                <div class="colour-key" style="background: #edc240;"></div>
+                                0.00/s
+                            </td>
+                        </tr>
+                        <tr>
+                            <th><span title="Click to toggle line" class="rate-visibility-option"
+                                      data-pref="chart-line-msg-rates-overconfirm">Publisher confirm</span></th>
+                            <td>
+                                <div class="colour-key" style="background: #afd8f8;"></div>
+                                0.00/s
+                            </td>
+                        </tr>
+                        <tr>
+                            <th><span title="Click to toggle line" class="rate-visibility-option"
+                                      data-pref="chart-line-msg-rates-overdeliver">Deliver (manual ack)</span></th>
+                            <td>
+                                <div class="colour-key" style="background: #cb4b4b;"></div>
+                                0.00/s
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                    <table class="legend">
+                        <tbody>
+                        <tr>
+                            <th><span title="Click to toggle line" class="rate-visibility-option"
+                                      data-pref="chart-line-msg-rates-overdeliver_no_ack">Deliver (auto ack)</span></th>
+                            <td>
+                                <div class="colour-key" style="background: #4da74d;"></div>
+                                0.00/s
+                            </td>
+                        </tr>
+                        <tr>
+                            <th><span title="Click to toggle line" class="rate-visibility-option"
+                                      data-pref="chart-line-msg-rates-overack">Consumer ack</span></th>
+                            <td>
+                                <div class="colour-key" style="background: #9440ed;"></div>
+                                0.00/s
+                            </td>
+                        </tr>
+                        <tr>
+                            <th><span title="Click to toggle line" class="rate-visibility-option"
+                                      data-pref="chart-line-msg-rates-overredeliver">Redelivered</span></th>
+                            <td>
+                                <div class="colour-key" style="background: #666666;"></div>
+                                0.00/s
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                    <table class="legend">
+                        <tbody>
+                        <tr>
+                            <th><span title="Click to toggle line" class="rate-visibility-option"
+                                      data-pref="chart-line-msg-rates-overget">Get (manual ack)</span></th>
+                            <td>
+                                <div class="colour-key" style="background: #aaaaaa;"></div>
+                                0.00/s
+                            </td>
+                        </tr>
+                        <tr>
+                            <th><span title="Click to toggle line" class="rate-visibility-option"
+                                      data-pref="chart-line-msg-rates-overget_no_ack">Get (auto ack)</span></th>
+                            <td>
+                                <div class="colour-key" style="background: #7c79c3;"></div>
+                                0.00/s
+                            </td>
+                        </tr>
+                        <tr>
+                            <th><span title="Click to toggle line" class="rate-visibility-option"
+                                      data-pref="chart-line-msg-rates-overreturn_unroutable">Return</span></th>
+                            <td>
+                                <div class="colour-key" style="background: #8e6767;"></div>
+                                0.00/s
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                    <table class="legend">
+                        <tbody>
+                        <tr>
+                            <th><span title="Click to toggle line" class="rate-visibility-option"
+                                      data-pref="chart-line-msg-rates-overdisk_reads">Disk read</span></th>
+                            <td>
+                                <div class="colour-key" style="background: #67808e;"></div>
+                                0.00/s
+                            </td>
+                        </tr>
+                        <tr>
+                            <th><span title="Click to toggle line" class="rate-visibility-option"
+                                      data-pref="chart-line-msg-rates-overdisk_writes">Disk write</span></th>
+                            <td>
+                                <div class="colour-key" style="background: #e5e4ae;"></div>
+                                0.00/s
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+
+                <h3>Global counts </h3>
+
+                <ul id="global-counts">
+                    <li>
+                        <a href=" #/connections" class="button">Connections: <strong>1</strong></a>
+                    </li>
+                    <li>
+                        <a href=" #/channels" class="button">Channels: <strong>2</strong></a>
+                    </li>
+                    <li>
+                        <a href=" #/exchanges" class="button">Exchanges: <strong>9</strong></a>
+                    </li>
+                    <li>
+                        <a href=" #/queues" class="button">Queues: <strong>2</strong></a>
+                    </li>
+
+                    <li>
+                        <a href=" #" class="button disabled">Consumers: <strong>2</strong></a>
+                    </li>
+
+                </ul>
+
+
+            </div>
+        </div>
+
+
+        <div class="section section-visible">
+            <h2 style="background: #666;color: #fff;">表格数据</h2>
+
+            <div class="hider updatable" style="display:block;">
+
+                <table class="list">
+                    <tbody>
+                    <tr>
+                        <th>Name</th>
+
+                        <th>File descriptors</th>
+
+
+                        <th>Socket descriptors</th>
+
+
+                        <th>Erlang processes</th>
+
+
+                        <th>Memory</th>
+
+
+                        <th>Disk space</th>
+
+
+                        <th>Uptime</th>
+
+
+                        <th>Info</th>
+
+
+                        <th>Reset stats</th>
+
+                        <th class="plus-minus"><span class="popup-options-link" title="Click to change columns"
+                                                     type="columns" for="overview">+/-</span></th>
+                    </tr>
+
+                     <tr class="alt1">
+                        <td>
+                            <a href=" #/nodes" class="button">rabbit@localhost</a>
+
+                        </td>
+
+
+                        <td>
+
+                            <div class="status-bar" style="width: 120px;">
+                                <div class="status-bar-main green"
+                                     style=" background-color:#a5ec97; background-position: -120px 0px; background-repeat: no-repeat;">
+                                    33
+                                </div>
+                               </div>
+
+                        </td>
+
+
+                        <td>
+                            <div class="status-bar" style="width: 120px;">
+                                <div class="status-bar-main green"
+                                     style=" background-color:#a5ec97; background-position: -120px 0px; background-repeat: no-repeat;">
+                                    1
+                                </div>
+
+                            </div>
+                        </td>
+
+
+                        <td>
+
+                            <div class="status-bar" style="width: 120px;">
+                                <div class="status-bar-main green"
+                                     style=" background-color:#a5ec97; background-position: -120px 0px; background-repeat: no-repeat;">
+                                    404
+                                </div>
+                                </div>
+                        </td>
+
+
+                        <td>
+
+
+                            <div class="status-bar" style="width: 120px;">
+                                <div class="status-bar-main green"
+                                     style=" background-color:#a5ec97; background-position: -25px 0px; background-repeat: no-repeat;">
+                                    95MiB
+                                </div>
+                              </div>
+
+                        </td>
+
+
+                        <td>
+
+
+                            <div class="status-bar" style="width: 120px;">
+                                <div class="status-bar-main green"
+                                     style="background-color:#a5ec97; background-position: -120px 0px; background-repeat: no-repeat;">
+                                    17GiB
+                                </div>
+                               </div>
+
+                        </td>
+
+
+                        <td><span>14h 3m</span></td>
+
+
+                        <td>
+                            <abbr title="Message rates">basic</abbr>
+
+                            <abbr title="Broker definitions are held on disc.">disc</abbr>
+
+                            <abbr title="Enabled plugins: rabbitmq_management">1</abbr>
+                            <abbr title="Memory calculation strategy">rss</abbr>
+                        </td>
+
+
+                        <td>
+                            <form action=" #/reset_node" method="delete" class="confirm inline-form">
+                                <input type="hidden" name="node" value="rabbit@localhost">
+                                <input type="submit" value="This node">
+                            </form>
+                            <form action=" #/reset" method="delete" class="confirm inline-form-right">
+                                <input type="submit" value="All nodes">
+                            </form>
+
+
+                        </td>
+                    </tr>
+                     <tr class="alt1">
+                        <td>
+                            <a href=" #/nodes" class="button">rabbit@localhost</a>
+
+                        </td>
+
+
+                        <td>
+
+                            <div class="status-bar" style="width: 120px;">
+                                <div class="status-bar-main green"
+                                     style=" background-color:#a5ec97; background-position: -120px 0px; background-repeat: no-repeat;">
+                                    33
+                                </div>
+                               </div>
+
+                        </td>
+
+
+                        <td>
+                            <div class="status-bar" style="width: 120px;">
+                                <div class="status-bar-main green"
+                                     style=" background-color:#a5ec97; background-position: -120px 0px; background-repeat: no-repeat;">
+                                    1
+                                </div>
+
+                            </div>
+                        </td>
+
+
+                        <td>
+
+                            <div class="status-bar" style="width: 120px;">
+                                <div class="status-bar-main green"
+                                     style=" background-color:#a5ec97; background-position: -120px 0px; background-repeat: no-repeat;">
+                                    404
+                                </div>
+                                </div>
+                        </td>
+
+
+                        <td>
+
+
+                            <div class="status-bar" style="width: 120px;">
+                                <div class="status-bar-main green"
+                                     style=" background-color:#a5ec97; background-position: -25px 0px; background-repeat: no-repeat;">
+                                    95MiB
+                                </div>
+                              </div>
+
+                        </td>
+
+
+                        <td>
+
+
+                            <div class="status-bar" style="width: 120px;">
+                                <div class="status-bar-main green"
+                                     style="background-color:#a5ec97; background-position: -120px 0px; background-repeat: no-repeat;">
+                                    17GiB
+                                </div>
+                               </div>
+
+                        </td>
+
+
+                        <td><span>14h 3m</span></td>
+
+
+                        <td>
+                            <abbr title="Message rates">basic</abbr>
+
+                            <abbr title="Broker definitions are held on disc.">disc</abbr>
+
+                            <abbr title="Enabled plugins: rabbitmq_management">1</abbr>
+                            <abbr title="Memory calculation strategy">rss</abbr>
+                        </td>
+
+
+                        <td>
+                            <form action=" #/reset_node" method="delete" class="confirm inline-form">
+                                <input type="hidden" name="node" value="rabbit@localhost">
+                                <input type="submit" value="This node">
+                            </form>
+                            <form action=" #/reset" method="delete" class="confirm inline-form-right">
+                                <input type="submit" value="All nodes">
+                            </form>
+
+
+                        </td>
+                    </tr>
+                     <tr class="alt1">
+                        <td>
+                            <a href=" #/nodes" class="button">rabbit@localhost</a>
+
+                        </td>
+
+
+                        <td>
+
+                            <div class="status-bar" style="width: 120px;">
+                                <div class="status-bar-main green"
+                                     style=" background-color:#a5ec97; background-position: -120px 0px; background-repeat: no-repeat;">
+                                    33
+                                </div>
+                               </div>
+
+                        </td>
+
+
+                        <td>
+                            <div class="status-bar" style="width: 120px;">
+                                <div class="status-bar-main green"
+                                     style=" background-color:#a5ec97; background-position: -120px 0px; background-repeat: no-repeat;">
+                                    1
+                                </div>
+
+                            </div>
+                        </td>
+
+
+                        <td>
+
+                            <div class="status-bar" style="width: 120px;">
+                                <div class="status-bar-main green"
+                                     style=" background-color:#a5ec97; background-position: -120px 0px; background-repeat: no-repeat;">
+                                    404
+                                </div>
+                                </div>
+                        </td>
+
+
+                        <td>
+
+
+                            <div class="status-bar" style="width: 120px;">
+                                <div class="status-bar-main green"
+                                     style=" background-color:#a5ec97; background-position: -25px 0px; background-repeat: no-repeat;">
+                                    95MiB
+                                </div>
+                              </div>
+
+                        </td>
+
+
+                        <td>
+
+
+                            <div class="status-bar" style="width: 120px;">
+                                <div class="status-bar-main green"
+                                     style="background-color:#a5ec97; background-position: -120px 0px; background-repeat: no-repeat;">
+                                    17GiB
+                                </div>
+                               </div>
+
+                        </td>
+
+
+                        <td><span>14h 3m</span></td>
+
+
+                        <td>
+                            <abbr title="Message rates">basic</abbr>
+
+                            <abbr title="Broker definitions are held on disc.">disc</abbr>
+
+                            <abbr title="Enabled plugins: rabbitmq_management">1</abbr>
+                            <abbr title="Memory calculation strategy">rss</abbr>
+                        </td>
+
+
+                        <td>
+                            <form action=" #/reset_node" method="delete" class="confirm inline-form">
+                                <input type="hidden" name="node" value="rabbit@localhost">
+                                <input type="submit" value="This node">
+                            </form>
+                            <form action=" #/reset" method="delete" class="confirm inline-form-right">
+                                <input type="submit" value="All nodes">
+                            </form>
+
+
+                        </td>
+                    </tr>
+                     <tr class="alt1">
+                        <td>
+                            <a href=" #/nodes" class="button">rabbit@localhost</a>
+
+                        </td>
+
+
+                        <td>
+
+                            <div class="status-bar" style="width: 120px;">
+                                <div class="status-bar-main green"
+                                     style=" background-color:#a5ec97; background-position: -120px 0px; background-repeat: no-repeat;">
+                                    33
+                                </div>
+                               </div>
+
+                        </td>
+
+
+                        <td>
+                            <div class="status-bar" style="width: 120px;">
+                                <div class="status-bar-main green"
+                                     style=" background-color:#a5ec97; background-position: -120px 0px; background-repeat: no-repeat;">
+                                    1
+                                </div>
+
+                            </div>
+                        </td>
+
+
+                        <td>
+
+                            <div class="status-bar" style="width: 120px;">
+                                <div class="status-bar-main green"
+                                     style=" background-color:#a5ec97; background-position: -120px 0px; background-repeat: no-repeat;">
+                                    404
+                                </div>
+                                </div>
+                        </td>
+
+
+                        <td>
+
+
+                            <div class="status-bar" style="width: 120px;">
+                                <div class="status-bar-main green"
+                                     style=" background-color:#a5ec97; background-position: -25px 0px; background-repeat: no-repeat;">
+                                    95MiB
+                                </div>
+                              </div>
+
+                        </td>
+
+
+                        <td>
+
+
+                            <div class="status-bar" style="width: 120px;">
+                                <div class="status-bar-main green"
+                                     style="background-color:#a5ec97; background-position: -120px 0px; background-repeat: no-repeat;">
+                                    17GiB
+                                </div>
+                               </div>
+
+                        </td>
+
+
+                        <td><span>14h 3m</span></td>
+
+
+                        <td>
+                            <abbr title="Message rates">basic</abbr>
+
+                            <abbr title="Broker definitions are held on disc.">disc</abbr>
+
+                            <abbr title="Enabled plugins: rabbitmq_management">1</abbr>
+                            <abbr title="Memory calculation strategy">rss</abbr>
+                        </td>
+
+
+                        <td>
+                            <form action=" #/reset_node" method="delete" class="confirm inline-form">
+                                <input type="hidden" name="node" value="rabbit@localhost">
+                                <input type="submit" value="This node">
+                            </form>
+                            <form action=" #/reset" method="delete" class="confirm inline-form-right">
+                                <input type="submit" value="All nodes">
+                            </form>
+
+
+                        </td>
+                    </tr>
+                     <tr class="alt1">
+                        <td>
+                            <a href=" #/nodes" class="button">rabbit@localhost</a>
+
+                        </td>
+
+
+                        <td>
+
+                            <div class="status-bar" style="width: 120px;">
+                                <div class="status-bar-main green"
+                                     style=" background-color:#a5ec97; background-position: -120px 0px; background-repeat: no-repeat;">
+                                    33
+                                </div>
+                               </div>
+
+                        </td>
+
+
+                        <td>
+                            <div class="status-bar" style="width: 120px;">
+                                <div class="status-bar-main green"
+                                     style=" background-color:#a5ec97; background-position: -120px 0px; background-repeat: no-repeat;">
+                                    1
+                                </div>
+
+                            </div>
+                        </td>
+
+
+                        <td>
+
+                            <div class="status-bar" style="width: 120px;">
+                                <div class="status-bar-main green"
+                                     style=" background-color:#a5ec97; background-position: -120px 0px; background-repeat: no-repeat;">
+                                    404
+                                </div>
+                                </div>
+                        </td>
+
+
+                        <td>
+
+
+                            <div class="status-bar" style="width: 120px;">
+                                <div class="status-bar-main green"
+                                     style=" background-color:#a5ec97; background-position: -25px 0px; background-repeat: no-repeat;">
+                                    95MiB
+                                </div>
+                              </div>
+
+                        </td>
+
+
+                        <td>
+
+
+                            <div class="status-bar" style="width: 120px;">
+                                <div class="status-bar-main green"
+                                     style="background-color:#a5ec97; background-position: -120px 0px; background-repeat: no-repeat;">
+                                    17GiB
+                                </div>
+                               </div>
+
+                        </td>
+
+
+                        <td><span>14h 3m</span></td>
+
+
+                        <td>
+                            <abbr title="Message rates">basic</abbr>
+
+                            <abbr title="Broker definitions are held on disc.">disc</abbr>
+
+                            <abbr title="Enabled plugins: rabbitmq_management">1</abbr>
+                            <abbr title="Memory calculation strategy">rss</abbr>
+                        </td>
+
+
+                        <td>
+                            <form action=" #/reset_node" method="delete" class="confirm inline-form">
+                                <input type="hidden" name="node" value="rabbit@localhost">
+                                <input type="submit" value="This node">
+                            </form>
+                            <form action=" #/reset" method="delete" class="confirm inline-form-right">
+                                <input type="submit" value="All nodes">
+                            </form>
+
+
+                        </td>
+                    </tr>
+
+
+                    </tbody>
+                </table>
+
+            </div>
+        </div>
+
+        <div class="section-hidden section-visible">
+            <h2 style="background: #666;color: #fff;">配置项</h2>
+            <div class="hider updatable" style="display:block;">
+                <h3>Connection operations <span class="popup-options-link" title="Click to change" type="rate"
+                                                for="connection-churn">last minute</span>
+                </h3>
+                <div class="box">
+                    <div id="chart-connection-churn" class="chart chart-full chart-small chart-rates"
+                         style="padding: 0px; position: relative;">
+                        <canvas class="flot-base"
+                                style="direction: ltr; position: absolute; left: 0px; top: 0px; width: 400px; height: 100px;"
+                                width="600" height="150"></canvas>
+                        <div class="flot-text"
+                             style="position: absolute; inset: 0px; font-size: smaller; color: rgb(84, 84, 84);">
+                            <div class="flot-x-axis flot-x1-axis xAxis x1Axis"
+                                 style="position: absolute; inset: 0px; display: block;">
+                                <div style="position: absolute; max-width: 57px; top: 86px; left: 41px; text-align: center;"
+                                     class="flot-tick-label tickLabel">14:37:00
+                                </div>
+                                <div style="position: absolute; max-width: 57px; top: 86px; left: 103px; text-align: center;"
+                                     class="flot-tick-label tickLabel">14:37:10
+                                </div>
+                                <div style="position: absolute; max-width: 57px; top: 86px; left: 165px; text-align: center;"
+                                     class="flot-tick-label tickLabel">14:37:20
+                                </div>
+                                <div style="position: absolute; max-width: 57px; top: 86px; left: 227px; text-align: center;"
+                                     class="flot-tick-label tickLabel">14:37:30
+                                </div>
+                                <div style="position: absolute; max-width: 57px; top: 86px; left: 289px; text-align: center;"
+                                     class="flot-tick-label tickLabel">14:37:40
+                                </div>
+                                <div style="position: absolute; max-width: 57px; top: 86px; left: 351px; text-align: center;"
+                                     class="flot-tick-label tickLabel">14:37:50
+                                </div>
+                            </div>
+                            <div class="flot-y-axis flot-y1-axis yAxis y1Axis"
+                                 style="position: absolute; inset: 0px; display: block;">
+                                <div style="position: absolute; top: 75px; left: 2px; text-align: right;"
+                                     class="flot-tick-label tickLabel">0.0/s
+                                </div>
+                                <div style="position: absolute; top: 2px; left: 2px; text-align: right;"
+                                     class="flot-tick-label tickLabel">1.0/s
+                                </div>
+                            </div>
+                        </div>
+                        <canvas class="flot-overlay"
+                                style="direction: ltr; position: absolute; left: 0px; top: 0px; width: 400px; height: 100px;"
+                                width="600" height="150"></canvas>
+                    </div>
+                    <table class="legend"></table>
+                    <table class="legend">
+                        <tbody>
+                        <tr>
+                            <th><span title="Click to toggle line" class="rate-visibility-option"
+                                      data-pref="chart-line-connection-churnconnection_created">Created</span></th>
+                            <td>
+                                <div class="colour-key" style="background: #edc240;"></div>
+                                0.00/s
+                            </td>
+                        </tr>
+                        <tr>
+                            <th><span title="Click to toggle line" class="rate-visibility-option"
+                                      data-pref="chart-line-connection-churnconnection_closed">Closed</span></th>
+                            <td>
+                                <div class="colour-key" style="background: #afd8f8;"></div>
+                                0.00/s
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <h3>Channel operations <span class="popup-options-link" title="Click to change" type="rate"
+                                             for="channel-churn">last minute</span>
+                </h3>
+                <div class="box">
+                    <div id="chart-channel-churn" class="chart chart-full chart-small chart-rates"
+                         style="padding: 0px; position: relative;">
+                        <canvas class="flot-base"
+                                style="direction: ltr; position: absolute; left: 0px; top: 0px; width: 400px; height: 100px;"
+                                width="600" height="150"></canvas>
+                        <div class="flot-text"
+                             style="position: absolute; inset: 0px; font-size: smaller; color: rgb(84, 84, 84);">
+                            <div class="flot-x-axis flot-x1-axis xAxis x1Axis"
+                                 style="position: absolute; inset: 0px; display: block;">
+                                <div style="position: absolute; max-width: 57px; top: 86px; left: 41px; text-align: center;"
+                                     class="flot-tick-label tickLabel">14:37:00
+                                </div>
+                                <div style="position: absolute; max-width: 57px; top: 86px; left: 103px; text-align: center;"
+                                     class="flot-tick-label tickLabel">14:37:10
+                                </div>
+                                <div style="position: absolute; max-width: 57px; top: 86px; left: 165px; text-align: center;"
+                                     class="flot-tick-label tickLabel">14:37:20
+                                </div>
+                                <div style="position: absolute; max-width: 57px; top: 86px; left: 227px; text-align: center;"
+                                     class="flot-tick-label tickLabel">14:37:30
+                                </div>
+                                <div style="position: absolute; max-width: 57px; top: 86px; left: 289px; text-align: center;"
+                                     class="flot-tick-label tickLabel">14:37:40
+                                </div>
+                                <div style="position: absolute; max-width: 57px; top: 86px; left: 351px; text-align: center;"
+                                     class="flot-tick-label tickLabel">14:37:50
+                                </div>
+                            </div>
+                            <div class="flot-y-axis flot-y1-axis yAxis y1Axis"
+                                 style="position: absolute; inset: 0px; display: block;">
+                                <div style="position: absolute; top: 75px; left: 2px; text-align: right;"
+                                     class="flot-tick-label tickLabel">0.0/s
+                                </div>
+                                <div style="position: absolute; top: 2px; left: 2px; text-align: right;"
+                                     class="flot-tick-label tickLabel">1.0/s
+                                </div>
+                            </div>
+                        </div>
+                        <canvas class="flot-overlay"
+                                style="direction: ltr; position: absolute; left: 0px; top: 0px; width: 400px; height: 100px;"
+                                width="600" height="150"></canvas>
+                    </div>
+                    <table class="legend"></table>
+                    <table class="legend">
+                        <tbody>
+                        <tr>
+                            <th><span title="Click to toggle line" class="rate-visibility-option"
+                                      data-pref="chart-line-channel-churnchannel_created">Created</span></th>
+                            <td>
+                                <div class="colour-key" style="background: #edc240;"></div>
+                                0.00/s
+                            </td>
+                        </tr>
+                        <tr>
+                            <th><span title="Click to toggle line" class="rate-visibility-option"
+                                      data-pref="chart-line-channel-churnchannel_closed">Closed</span></th>
+                            <td>
+                                <div class="colour-key" style="background: #afd8f8;"></div>
+                                0.00/s
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <h3>Queue operations <span class="popup-options-link" title="Click to change" type="rate"
+                                           for="queue-churn">last minute</span></h3>
+                <div class="box">
+                    <div id="chart-queue-churn" class="chart chart-full chart-small chart-rates"
+                         style="padding: 0px; position: relative;">
+                        <canvas class="flot-base"
+                                style="direction: ltr; position: absolute; left: 0px; top: 0px; width: 400px; height: 100px;"
+                                width="600" height="150"></canvas>
+                        <div class="flot-text"
+                             style="position: absolute; inset: 0px; font-size: smaller; color: rgb(84, 84, 84);">
+                            <div class="flot-x-axis flot-x1-axis xAxis x1Axis"
+                                 style="position: absolute; inset: 0px; display: block;">
+                                <div style="position: absolute; max-width: 57px; top: 86px; left: 41px; text-align: center;"
+                                     class="flot-tick-label tickLabel">14:37:00
+                                </div>
+                                <div style="position: absolute; max-width: 57px; top: 86px; left: 103px; text-align: center;"
+                                     class="flot-tick-label tickLabel">14:37:10
+                                </div>
+                                <div style="position: absolute; max-width: 57px; top: 86px; left: 165px; text-align: center;"
+                                     class="flot-tick-label tickLabel">14:37:20
+                                </div>
+                                <div style="position: absolute; max-width: 57px; top: 86px; left: 227px; text-align: center;"
+                                     class="flot-tick-label tickLabel">14:37:30
+                                </div>
+                                <div style="position: absolute; max-width: 57px; top: 86px; left: 289px; text-align: center;"
+                                     class="flot-tick-label tickLabel">14:37:40
+                                </div>
+                                <div style="position: absolute; max-width: 57px; top: 86px; left: 351px; text-align: center;"
+                                     class="flot-tick-label tickLabel">14:37:50
+                                </div>
+                            </div>
+                            <div class="flot-y-axis flot-y1-axis yAxis y1Axis"
+                                 style="position: absolute; inset: 0px; display: block;">
+                                <div style="position: absolute; top: 75px; left: 2px; text-align: right;"
+                                     class="flot-tick-label tickLabel">0.0/s
+                                </div>
+                                <div style="position: absolute; top: 2px; left: 2px; text-align: right;"
+                                     class="flot-tick-label tickLabel">1.0/s
+                                </div>
+                            </div>
+                        </div>
+                        <canvas class="flot-overlay"
+                                style="direction: ltr; position: absolute; left: 0px; top: 0px; width: 400px; height: 100px;"
+                                width="600" height="150"></canvas>
+                    </div>
+                    <table class="legend"></table>
+                    <table class="legend">
+                        <tbody>
+                        <tr>
+                            <th><span title="Click to toggle line" class="rate-visibility-option"
+                                      data-pref="chart-line-queue-churnqueue_declared">Declared</span></th>
+                            <td>
+                                <div class="colour-key" style="background: #edc240;"></div>
+                                0.00/s
+                            </td>
+                        </tr>
+                        <tr>
+                            <th><span title="Click to toggle line" class="rate-visibility-option"
+                                      data-pref="chart-line-queue-churnqueue_created">Created</span></th>
+                            <td>
+                                <div class="colour-key" style="background: #afd8f8;"></div>
+                                0.00/s
+                            </td>
+                        </tr>
+                        <tr>
+                            <th><span title="Click to toggle line" class="rate-visibility-option"
+                                      data-pref="chart-line-queue-churnqueue_deleted">Deleted</span></th>
+                            <td>
+                                <div class="colour-key" style="background: #cb4b4b;"></div>
+                                0.00/s
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+        </div>
+
+
+        <div class="section-hidden section-visible">
+            <h2 style="background: #666;color: #fff;">测试环境</h2>
+            <div class="hider updatable" style="display:block;">
+                <h3>Listening ports</h3>
+                <table class="list">
+                    <tbody>
+                    <tr>
+                        <th>Protocol</th>
+
+                        <th>Bound to</th>
+                        <th>Port</th>
+                    </tr>
+
+                    <tr class="alt1">
+                        <td>amqp</td>
+
+                        <td>::</td>
+                        <td>5672</td>
+                    </tr>
+
+                    <tr class="alt2">
+                        <td>clustering</td>
+
+                        <td>::</td>
+                        <td>25672</td>
+                    </tr>
+
+                    <tr class="alt1">
+                        <td>http</td>
+
+                        <td>::</td>
+                        <td>15672</td>
+                    </tr>
+
+                    </tbody>
+                </table>
+                <h3>Web contexts</h3>
+                <table class="list">
+                    <tbody>
+                    <tr>
+                        <th>Context</th>
+
+                        <th>Bound to</th>
+                        <th>Port</th>
+                        <th>SSL</th>
+                        <th>Path</th>
+                    </tr>
+
+                    <tr class="alt1">
+                        <td>RabbitMQ Management</td>
+
+                        <td>0.0.0.0</td>
+                        <td>15672</td>
+                        <td class="c"></td>
+                        <td>/</td>
+                    </tr>
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="section-hidden administrator-only section-visible">
+            <h2 style="background: #666;color: #fff;">测试结论</h2>
+            <div class="hider" style="display:block;">
+                <table class="two-col-layout">
+                    <tbody>
+                    <tr>
+                        <td>
+                            <p>
+                                <label for="download-filename">Filename for download:</label><br>
+                                <input type="text" id="download-filename" value="rabbit_localhost_2019-6-21.json"
+                                       class="wide">
+                            </p>
+                        </td>
+                        <td>
+                           成功率：100%
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+
+                            <input type="hidden" name="vhost" value="all">
+
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="section-hidden administrator-only section-visible">
+            <h2 style="background: #666;color: #fff;">异常提示</h2>
+            <div class="hider" style="display:block;">
+               Error.
+            </div>
+        </div>
+
+
+    </div>
+     <div id="footer">
+        <ul>
+            <li><a href="http://192.168.231.101:15672/api/" target="_blank">HTTP API</a></li>
+            <li><a href="https://www.rabbitmq.com/admin-guide.html" target="_blank">Server Docs</a></li>
+            <li><a href="https://www.rabbitmq.com/getstarted.html" target="_blank">Tutorials</a></li>
+            <li><a href="https://groups.google.com/forum/#!forum/rabbitmq-users" target="_blank">Community Support</a>
+            </li>
+            <li><a href="https://rabbitmq-slack.herokuapp.com/" target="_blank">Community Slack</a></li>
+            <li><a href="https://www.rabbitmq.com/services.html" target="_blank">Commercial Support</a></li>
+            <li><a href="https://www.rabbitmq.com/plugins.html" target="_blank">Plugins</a></li>
+            <li><a href="https://www.rabbitmq.com/github.html" target="_blank">GitHub</a></li>
+            <li><a href="https://www.rabbitmq.com/changelog.html" target="_blank">Changelog</a></li>
+        </ul>
+    </div>
+
+</div>
+<div id="debug"></div>
+<div id="scratch"></div>
+
+
+
+</body>
+</html>

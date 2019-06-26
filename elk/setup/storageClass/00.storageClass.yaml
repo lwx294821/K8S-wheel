@@ -1,0 +1,29 @@
+---
+kind: Secret
+apiVersion: v1
+metadata:
+  name: ceph-secret-admin
+  namespace: kube-elk
+type: "kubernetes.io/rbd"
+data:
+  key: QVFBUG13ZGNTRDhRRFJBQWZOOFdHVHlLdHNMNDZML2hHcHdVN2c9PQo=
+
+---
+kind: StorageClass
+apiVersion: storage.k8s.io/v1
+metadata:
+  name: ceph-rbd
+provisioner: kubernetes.io/rbd
+parameters:
+  monitors: 20.46.91.123:6789,20.46.91.124:6789,20.46.91.125:6789
+  adminid: admin
+  adminSecretName: ceph-secret-admin
+  adminSecretNamespace: kube-elk
+  pool: rbd
+  userId: admin
+  userSecretName: ceph-secret-admin
+  fsType: xfs
+  imageFormat: "2"
+  #imageFeatures: "laying"
+  #reclaimPolicy: Retain
+  #allowVolumeExpansion: true

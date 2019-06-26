@@ -1,0 +1,75 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: logstash-inner
+  namespace: kube-elk
+spec:
+  ports:
+  - port: 8080
+    protocol: TCP
+  clusterIP: None
+  selector:
+    elastic-app: logstash
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  labels:
+    elastic-app: logstash
+  name: logstash
+  namespace: kube-elk
+spec:
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      elastic-app: logstash
+  serviceName: "logstash-inner"
+  template:
+    metadata:
+      labels:
+        elastic-app: logstash
+    spec:
+      hostNetwork: true
+      containers:
+        - name: logstash
+          image: reg.kolla.org/fluent/logstash:v1
+          command: ["./bin/logstash"]
+          args: ["-f","config/kafka-logstash-es.conf"]
+          ports:
+            - containerPort: 8080
+              protocol: TCP
+          #resources:
+          #  limits:
+          #    cpu: 1000m
+          #    memory: 1Gi
+          #  requests:
+          #    cpu: 500m
+          #    memory: 500Mi
+          volumeMounts:
+            - mountPath: /usr/share/logstash/config
+              name: logstash-conf
+            - mountPath: /etc/localtime
+              name: localtime
+            - mountPath: /usr/share/logstash/data
+              name: logstash-data
+      volumes:
+        - name: localtime
+          hostPath:
+            path: /etc/localtime
+        - name: logstash-conf
+          configMap:
+            name: logstash-map
+      tolerations:
+        - key: node-role.kubernetes.io/master
+          effect: NoSchedule
+  volumeClaimTemplates:
+  - metadata:
+      name: logstash-data
+    spec:
+      accessModes: ["ReadWriteOnce"]
+      storageClassName: "ceph-rbd"
+      resources:
+        requests:
+          storage: 10Gi

@@ -1,0 +1,124 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: kafka-inner
+  namespace: kube-elk
+spec:
+  ports:
+  - port: 9092
+  clusterIP: None
+  selector:
+    app: kafka
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: kafka-server
+  namespace: kube-elk
+spec:
+  ports:
+  - port: 9092
+    protocol: TCP
+    targetPort: 9092
+    nodePort: 32002
+  type: NodePort
+  selector:
+    app: kafka
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: kafka
+  namespace: kube-elk
+spec:
+  selector:
+    matchLabels:
+      app: kafka
+  serviceName: "kafka-inner"
+  replicas: 3
+  #updateStrategy:
+  #  type: OnDelete
+  template:
+    metadata:
+      labels:
+        app: kafka
+      #annotations:
+    spec:
+      terminationGracePeriodSeconds: 30
+      initContainers:
+      - name: init-config
+        imagePullPolicy: IfNotPresent
+        image: reg.kolla.org/fluent/initkafka:vv1
+        env:
+        - name: NODE_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: spec.nodeName
+        - name: POD_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        - name: POD_NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        command: ['/bin/bash', '/etc/kafka-configmap/init.sh']
+        volumeMounts:
+        - name: configmap
+          mountPath: /etc/kafka-configmap
+        - name: config
+          mountPath: /etc/kafka
+        - name: kafka-data
+          mountPath: /var/lib/kafka/data
+      containers:
+      - name: broker
+        imagePullPolicy: IfNotPresent
+        image: reg.kolla.org/fluent/kafka1:vv1
+        env:
+        - name: KAFKA_LOG4J_OPTS
+          value: -Dlog4j.configuration=file:/etc/kafka/log4j.properties
+        ports:
+        - name: inside
+          containerPort: 9092
+        - name: outside
+          containerPort: 9094
+        command:
+        - ./bin/kafka-server-start.sh 
+        - /etc/kafka/server.properties
+        resources:
+          requests:
+            cpu: 500m
+            memory: 1024Mi
+        readinessProbe:
+          tcpSocket:
+            port: 9092
+          timeoutSeconds: 1
+        volumeMounts:
+        - name: config
+          mountPath: /etc/kafka
+        - name: kafka-data
+          mountPath: /var/lib/kafka/data
+        - name: localtime
+          mountPath: /etc/localtime
+      volumes:
+      - name: configmap
+        configMap:
+          name: broker-config
+      - name: config
+        emptyDir: {}
+      - name: localtime
+        hostPath:
+          path: /etc/localtime
+      #- name: data
+      #  hostPath:
+      #    path: /var/lib/kafka/data
+  volumeClaimTemplates:
+  - metadata:
+      name: kafka-data
+    spec:
+      accessModes: ["ReadWriteOnce"]
+      storageClassName: "ceph-rbd"
+      resources:
+        requests:
+          storage: 10Gi

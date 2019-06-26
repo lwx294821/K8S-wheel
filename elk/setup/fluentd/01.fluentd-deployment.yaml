@@ -1,0 +1,60 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: fluentd
+  namespace: kube-elk
+  labels:
+    k8s-app: fluentd-logging
+spec:
+  selector:
+    matchLabels:
+      name: fluentd-logging
+  template:
+    metadata:
+      labels:
+        name: fluentd-logging
+    spec:
+      tolerations:
+      - key: node-role.kubernetes.io/master
+        effect: NoSchedule
+      hostNetwork: true
+      containers:
+      - name: fluentd-logging
+        image: reg.kolla.org/fluent/fluentd:v0.1
+        env:
+        - name: MY_NODE_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: spec.nodeName
+        command: ["fluentd"]
+        args: ["-c","/fluentd/etc/fluent.conf"]
+        resources:
+          limits:
+            cpu: 1000m
+            memory: 1Gi
+          requests:
+            cpu: 100m
+            memory: 200Mi
+        volumeMounts:
+        - name: localtime
+          mountPath: /etc/localtime  
+        - name: fluent-conf
+          mountPath: "/fluentd/etc"
+          readOnly: false
+        - name: pod-log
+          mountPath: "/var/log/pods"
+        - name: docker-log
+          mountPath: "/var/lib/docker/containers"
+      volumes:
+      - name: localtime
+        hostPath:
+          path: /etc/localtime
+      - name: fluent-conf
+        configMap:
+          name: fluentd-conf
+      - name: pod-log
+        hostPath:
+          path: /var/log/pods
+      - name: docker-log
+        hostPath:
+          path: /var/lib/docker/containers
