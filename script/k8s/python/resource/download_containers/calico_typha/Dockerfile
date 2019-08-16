@@ -1,1 +1,1 @@
-FROM docker.io/calico/typha:v3.4.4
+FROM docker.io/calico/typha:v3.7.3

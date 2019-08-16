@@ -1,1 +1,1 @@
-FROM docker.io/calico/cni:v3.4.0
+FROM docker.io/calico/cni:v3.7.3

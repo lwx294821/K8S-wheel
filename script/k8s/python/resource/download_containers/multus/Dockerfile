@@ -1,1 +1,1 @@
-FROM docker.io/nfvpe/multus:v3.1.autoconf
+FROM docker.io/nfvpe/multus:v3.2.1

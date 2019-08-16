@@ -1,1 +1,1 @@
-FROM docker.io/library/busybox:1.28.4
+FROM docker.io/cilium/cilium-init:2019-04-05

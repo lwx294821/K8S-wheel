@@ -1,0 +1,1 @@
+FROM index.alauda.cn/alaudak8s/kube-ovn-node:v0.6.0

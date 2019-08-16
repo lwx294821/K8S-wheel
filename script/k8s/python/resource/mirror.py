@@ -106,7 +106,8 @@ class K8SImages(object):
         try:
             with open(args.get('file'), 'r') as f:
                 data = yaml.load(f, Loader=yaml.FullLoader)
-        except Exception:
+        except Exception as e:
+            color_log.error(e)
             raise Exception("Cannot read %s as JSON, YAML, or CSV" % args.get('file'))
         root_path = data.get('dockerfile')['root_path']
         component = data.get('component')

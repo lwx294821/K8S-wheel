@@ -1,0 +1,1 @@
+FROM docker.io/cilium/operator:v1.5.5

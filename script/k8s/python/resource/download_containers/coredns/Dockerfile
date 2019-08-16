@@ -1,1 +1,1 @@
-FROM docker.io/coredns/coredns:1.5.0
+FROM docker.io/coredns/coredns:1.6.0
