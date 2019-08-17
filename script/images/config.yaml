@@ -1,11 +1,11 @@
 dockerfile:
-  root_path: ./all_dockerfile/
+  root_path: ./dockerfile/
 registry:
   host: 192.168.127.128:5000
 dockerhub:
   repository: d20190308/k8s-images
-images_save_path: ./images/
-images_load_path: ./images/
+images_save_path: ./containers/
+images_load_path: ./containers/
 component:
  kube-apiserver:
     repo: gcr.io/google-containers/kube-apiserver
