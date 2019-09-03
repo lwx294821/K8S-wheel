@@ -1,25 +1,10 @@
-## begin
-# k8s core component
-kube-apiserver:
-  repo: gcr.io/google-containers/kube-apiserver
-  tag: v1.14.1
-kube-controller-manager:
-  repo: gcr.io/google-containers/kube-controller-manager
-  tag: v1.14.1
-kube-proxy:
-  repo: gcr.io/google-containers/kube-proxy
-  tag: v1.14.1
-kube-scheduler:
-  repo: gcr.io/google-containers/kube-scheduler
-  tag: v1.14.1
-## end
 busybox:
   repo: docker.io/busybox
   tag: 1.29.2
   container: true
 calico_typha:
   repo: docker.io/calico/typha
-  tag: v3.4.4
+  tag: v3.7.3
   container: true
 contiv_auth_proxy:
   repo: docker.io/contiv/auth_proxy
@@ -27,7 +12,11 @@ contiv_auth_proxy:
   container: true
 dnsautoscaler:
   repo: k8s.gcr.io/cluster-proportional-autoscaler-amd64
-  tag: 1.4.0
+  tag: 1.6.0
+  container: true
+kube_ovn_cni:
+  repo: index.alauda.cn/alaudak8s/kube-ovn-cni
+  tag: v0.6.0
   container: true
 pod_infra:
   repo: gcr.io/google_containers/pause-amd64
@@ -35,15 +24,19 @@ pod_infra:
   container: true
 etcd:
   repo: quay.io/coreos/etcd
-  tag: v3.2.26
+  tag: v3.3.10
   container: true
 helm:
   repo: docker.io/lachlanevenson/k8s-helm
-  tag: v2.13.1
+  tag: v2.14.3
   container: true
 local_path_provisioner:
   repo: docker.io/rancher/local-path-provisioner
   tag: v0.0.2
+  container: true
+cilium_operator:
+  repo: docker.io/cilium/operator
+  tag: v1.5.5
   container: true
 rbd_provisioner:
   repo: quay.io/external_storage/rbd-provisioner
@@ -59,7 +52,11 @@ registry_proxy:
   container: true
 weave_npc:
   repo: docker.io/weaveworks/weave-npc
-  tag: 2.5.1
+  tag: 2.5.2
+  container: true
+contiv:
+  repo: docker.io/contiv/netplugin
+  tag: 1.2.1
   container: true
 netcheck_agent:
   repo: quay.io/l23network/k8s-netchecker-agent
@@ -73,9 +70,13 @@ nginx:
   repo: docker.io/nginx
   tag: 1.15
   container: true
+kube_ovn_node:
+  repo: index.alauda.cn/alaudak8s/kube-ovn-node
+  tag: v0.6.0
+  container: true
 tiller:
   repo: gcr.io/kubernetes-helm/tiller
-  tag: v2.13.1
+  tag: v2.14.3
   container: true
 flannel:
   repo: quay.io/coreos/flannel
@@ -91,7 +92,7 @@ dashboard:
   container: true
 local_volume_provisioner:
   repo: quay.io/external_storage/local-volume-provisioner
-  tag: v2.1.0
+  tag: v2.3.2
   container: true
 testbox:
   repo: docker.io/busybox
@@ -99,7 +100,7 @@ testbox:
   container: true
 calico_policy:
   repo: docker.io/calico/kube-controllers
-  tag: v3.4.0
+  tag: v3.7.3
   container: true
 cert_manager_controller:
   repo: quay.io/jetstack/cert-manager-controller
@@ -107,11 +108,11 @@ cert_manager_controller:
   container: true
 nodelocaldns:
   repo: k8s.gcr.io/k8s-dns-node-cache
-  tag: 1.15.1
+  tag: 1.15.4
   container: true
-contiv:
-  repo: docker.io/contiv/netplugin
-  tag: 1.2.1
+cilium_init:
+  repo: docker.io/cilium/cilium-init
+  tag: 2019-04-05
   container: true
 contiv_etcd_init:
   repo: docker.io/ferest/etcd-initer
@@ -119,19 +120,15 @@ contiv_etcd_init:
   container: true
 ingress_nginx_controller:
   repo: quay.io/kubernetes-ingress-controller/nginx-ingress-controller
-  tag: 0.21.0
+  tag: 0.24.1
   container: true
 multus:
   repo: docker.io/nfvpe/multus
-  tag: v3.1.autoconf
+  tag: v3.2.1
   container: true
 kube_router:
   repo: docker.io/cloudnativelabs/kube-router
   tag: v0.2.5
-  container: true
-cilium_init:
-  repo: docker.io/library/busybox
-  tag: 1.28.4
   container: true
 cephfs_provisioner:
   repo: quay.io/external_storage/cephfs-provisioner
@@ -143,11 +140,15 @@ addon_resizer:
   container: true
 calico_node:
   repo: docker.io/calico/node
-  tag: v3.4.0
+  tag: v3.7.3
   container: true
 weave_kube:
   repo: docker.io/weaveworks/weave-kube
-  tag: 2.5.1
+  tag: 2.5.2
+  container: true
+kube_ovn_db:
+  repo: index.alauda.cn/alaudak8s/kube-ovn-db
+  tag: v0.6.0
   container: true
 registry:
   repo: docker.io/registry
@@ -159,37 +160,49 @@ install_socat:
   container: true
 metrics_server:
   repo: gcr.io/google_containers/metrics-server-amd64
-  tag: v0.3.2
+  tag: v0.3.3
   container: true
 haproxy:
   repo: docker.io/haproxy
   tag: 1.9
   container: true
+kube_ovn_controller:
+  repo: index.alauda.cn/alaudak8s/kube-ovn-controller
+  tag: v0.6.0
+  container: true
 coredns:
   repo: docker.io/coredns/coredns
-  tag: 1.5.0
+  tag: 1.6.0
   container: true
 calico_cni:
   repo: docker.io/calico/cni
-  tag: v3.4.0
+  tag: v3.7.3
   container: true
 cilium:
   repo: docker.io/cilium/cilium
-  tag: v1.3.0
+  tag: v1.5.5
   container: true
+etcd:
+  dest: /tmp/releases/etcd-v3.3.10-linux-amd64.tar.gz
+  url:  https://github.com/coreos/etcd/releases/download/v3.3.10/etcd-v3.3.10-linux-amd64.tar.gz
+  file:  true
 kubeadm:
-  dest: /tmp/releases/kubeadm
-  url:  https://storage.googleapis.com/kubernetes-release/release/v1.14.1/bin/linux/amd64/kubeadm
+  dest: /tmp/releases/kubeadm-v1.15.2-amd64
+  url:  https://storage.googleapis.com/kubernetes-release/release/v1.15.2/bin/linux/amd64/kubeadm
   file:  true
 calicoctl:
   dest: /tmp/releases/calicoctl
-  url:  https://github.com/projectcalico/calicoctl/releases/download/v3.4.4/calicoctl-linux-amd64
+  url:  https://github.com/projectcalico/calicoctl/releases/download/v3.7.3/calicoctl-linux-amd64
   file:  true
 hyperkube_file:
-  dest: /tmp/releases/hyperkube
-  url:  https://storage.googleapis.com/kubernetes-release/release/v1.14.1/bin/linux/amd64/hyperkube
+  dest: /tmp/releases/hyperkube-v1.15.2-amd64
+  url:  https://storage.googleapis.com/kubernetes-release/release/v1.15.2/bin/linux/amd64/hyperkube
+  file:  true
+crictl:
+  dest: /tmp/releases/crictl-v1.15.0-linux-amd64.tar.gz
+  url:  https://github.com/kubernetes-sigs/cri-tools/releases/download/v1.15.0/crictl-v1.15.0--amd64.tar.gz
   file:  true
 cni:
-  dest: /tmp/releases/cni-plugins-amd64-v0.6.0.tgz
-  url:  https://github.com/containernetworking/plugins/releases/download/v0.6.0/cni-plugins-amd64-v0.6.0.tgz
+  dest: /tmp/releases/cni-plugins-linux-amd64-v0.8.1.tgz
+  url:  https://github.com/containernetworking/plugins/releases/download/v0.8.1/cni-plugins-linux-amd64-v0.8.1.tgz
   file:  true

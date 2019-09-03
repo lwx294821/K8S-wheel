@@ -159,10 +159,10 @@ component:
   repo: quay.io/external_storage/cephfs-provisioner
   tag: v2.1.0-k8s1.11
   container: true
- addon_resizer:
-  repo: k8s.gcr.io/addon-resizer
-  tag: 1.8.3
-  container: true
+# addon_resizer:
+#  repo: k8s.gcr.io/addon-resizer
+#  tag: 1.8.3
+#  container: true
  calico_node:
   repo: docker.io/calico/node
   tag: v3.7.3

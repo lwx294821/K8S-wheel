@@ -1,0 +1,31 @@
+---
+- name: echo date 
+  shell: date "+%Y-%m-%d"
+  register: date_output 
+- name: "Clear History Image List"
+  file:
+    path: ./{{date_output.stdout}}-list.yaml
+    state: absent
+- name: "Create Image List Yaml"
+  shell: |
+      echo "{{item.key}}:" >> "{{ date_output.stdout }}"-list.yaml
+      echo "  repo: {{ download.repo }}" >> "{{ date_output.stdout }}"-list.yaml
+      echo "  tag: {{ download.tag }}" >> "{{ date_output.stdout }}"-list.yaml
+      echo "  container: true" >> "{{ date_output.stdout }}"-list.yaml
+  vars:
+    download: "{{ download_defaults | combine(item.value) }}"
+  with_dict: "{{ downloads }}"
+  when:
+    - item.value.container | default(false)
+- name: "Create File List Yaml"
+  shell: |
+      echo  "{{ item.key }}:" >> "{{ date_output.stdout }}"-list.yaml
+      echo  "  dest: {{ download.dest }}" >> "{{ date_output.stdout }}"-list.yaml
+      echo  "  url:  {{ download.url }}" >>"{{ date_output.stdout }}"-list.yaml
+      echo  "  file:  true" >>"{{ date_output.stdout }}"-list.yaml
+  vars:
+    download: "{{ download_defaults | combine(item.value) }}"
+  with_dict: "{{ downloads }}"
+  when:
+    - item.value.file | default(false)
+  

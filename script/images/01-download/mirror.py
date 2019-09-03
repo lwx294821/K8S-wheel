@@ -233,7 +233,7 @@ class K8SImages(object):
                             color_log.debug(pull)
                             RESULT_INFO.append({'repo': item['repo'], 'tag': item['tag']})
                         else:
-                            if not exec_command(pull, raise_exception=True, timeout=10):
+                            if not exec_command(pull, raise_exception=True, timeout=30):
                                 FAILURE_INFO.append({'repo': item['repo'], 'tag': item['tag']})
                                 continue
                             else:
@@ -282,6 +282,7 @@ class K8SImages(object):
             if isinstance(item, dict):
                 if item.get('container'):
                     save_name = images_save_path + i + '.' + str(item['tag']) + '.tar'
+                    color_log.debug(hide_remote_repository(item['repo']))
                     image_name = hide_remote_repository(item['repo']) + ':' + str(item['tag'])
                     cmd = 'docker save -o %s %s' % (save_name, image_name)
                     if not args.get('debug'):
@@ -445,6 +446,11 @@ def check_image_id(name=None):
 def hide_remote_repository(arg):
     if isinstance(arg, str):
         for i in EXTERNAL_REPO:
+            if not arg.startswith(i):
+                continue
+            else:
+                return arg.replace(i, '')
+        for i in INTERNAL_REPO:
             if not arg.startswith(i):
                 continue
             else:

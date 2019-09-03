@@ -4,5 +4,5 @@
 - hosts: localhost
   gather_facts: no
   roles:
-    - {role: "inventory", tags: "inventory"}
+    - {role: "list", tags: "list"}
 
