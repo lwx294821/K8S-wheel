@@ -1,0 +1,31 @@
+---
+- name: Configure local repository
+  yum_repository:
+    name: local
+    description: "Local"
+    state: present
+    baseurl: "{{ yum_baseurl }}"
+    file: "local"
+    gpgcheck: no  
+    keepcache: "1"
+
+- name: Configure local repository
+  yum_repository:
+    name: local
+    description: "Local"
+    state: present
+    baseurl: "{{ yum_source }}"
+    file: "local"
+    gpgcheck: no  
+    keepcache: "1"
+    delegate_to: localhost  
+
+- name: yum clean and makecache
+  yum:
+    name: "*"
+    update_cache: yes  
+- name: install base packages
+  yum:
+    name: "{{yum_base_packages}}" 
+    state: present
+    update_cache: true

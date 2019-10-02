@@ -1,0 +1,7 @@
+- hosts: all
+  any_errors_fatal: true
+  roles:
+    - { role: hosts, tags: hosts}
+    - { role: chronyd, tags: chronyd }
+    - { role: yum, tags: yum}
+    - { role: pip, tags: pip}

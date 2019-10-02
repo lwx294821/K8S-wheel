@@ -1,0 +1,74 @@
+---
+- name: Hosts | configuire system hostname
+  hostname:
+    name: "{{ inventory_hostname }}"
+  become: yes
+
+- name: SWAP | Temporarily closed swap
+  command: swapoff -a
+
+- name: SWAP | Permanently closed swap and the swap entry will be removed from fstab
+  mount:
+    name: swap
+    fstype: swap
+    state: absent
+
+- name: SELinux | Disable SELinux
+  selinux:
+    configfile: /etc/selinux/config
+    state: disabled
+
+- name: Firewalld |Stop firewalld
+  systemd:
+    name: firewalld
+    state: stopped
+    enabled: no
+
+- name: Hosts | populate inventory into hosts file
+  blockinfile:
+    path: /etc/hosts
+    block: |-
+         {% for item in (groups['all']|default([]))|unique -%}
+         {% if 'ip' in hostvars[item] -%}
+         {{ hostvars[item]['ip'] }} {{ hostvars[item]['ansible_hostname'] }}      
+         {% endfor %}
+         {% endfor %}
+    state: present
+    create: yes
+    backup: yes
+    unsafe_writes: yes
+    marker: "# Ansible inventory hosts {mark}"
+    delegate_to: localhost
+
+- name: SSH | enforce env   
+  shell: source /etc/profile
+  run_once: true
+
+- name: SSH | close ssh check  
+  shell: sed -i "s/^.*StrictHostKeyChecking.*$/   StrictHostKeyChecking no/g" /etc/ssh/ssh_config
+
+- name: SSH | delete /root/.ssh/
+  file: 
+    path: /root/.ssh/
+  state: absent
+
+- name: SSH | generating public/private rsa key pair
+  shell: ssh-keygen -t rsa -b 2048 -N '' -f /root/.ssh/id_rsa
+
+- name: SSH | view id_rsa.pub  
+  shell: cat /root/.ssh/id_rsa.pub
+  register: sshinfo
+
+- name: SSH | set  sshinfo fact 
+  set_fact: 
+    sshpub: {{sshinfo.stdout}}
+
+- name: SSH | add ssh record
+  shell: echo {{sshpub}} >> /roles/templates/authorized_keys.j2
+  delegate_to: localhost
+
+- name: SSH | copy authorized_keys.j2 to all
+  template:
+    src: /roles/templates/authorized_keys.j2 
+    dest: /root/.ssh/authorized_keys
+    mode: 0600

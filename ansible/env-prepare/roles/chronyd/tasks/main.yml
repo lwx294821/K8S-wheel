@@ -1,0 +1,15 @@
+---
+- name: Install chronyd server
+  template:
+    src: "chrony.server.conf.j2"
+    dest: "/etc/chrony.conf"
+    mode: 0644
+    backup: yes
+  delegate_to: localhost
+- name: Install chronyd client
+  template:
+    src: "chrony.client.conf.j2"
+    dest: "/etc/chrony.conf"
+    mode: 0644
+    backup: yes
+  

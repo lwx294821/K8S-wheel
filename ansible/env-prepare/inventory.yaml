@@ -1,0 +1,9 @@
+---
+[all]
+node01 ip=10.10.10.2 ansible_ssh_user=root ansible_ssh_pass=123456 ansible_ssh_port=22
+node02 ip=10.10.10.3 ansible_ssh_user=root ansible_ssh_pass=123456 ansible_ssh_port=22
+node03 ip=10.10.10.4 ansible_ssh_user=root ansible_ssh_pass=123456 ansible_ssh_port=22
+
+
+
+

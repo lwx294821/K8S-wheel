@@ -1,0 +1,4 @@
+---
+pip_index_url: 'http://192.168.211.129/pypi/packages/simple'
+pip_trusted_host: '192.168.211.129'
+pip_base_packages: [' netaddr',' jinja2']
