@@ -1,0 +1,12 @@
+ansible-playbook <filename.yml> ... [options]
+ filename.yml: yaml格式的playbook文件路径，必须指明
+ options选项
+  -C, --check：并不在远程主机上执行，只是测试。
+  -i PATH, --inventory=PATH：资产的文件路径
+  --flush-cache：清除fact缓存
+  --list-hosts：列出匹配的远程主机，并不执行任何动作
+  -t, TAGS, --tags=TAGS：运行指定的标签任务
+  --skip-tags:跳过指定的notify
+
+使用方式
+  ansible-playbook -i inventory.yaml -C  playbook.yaml 

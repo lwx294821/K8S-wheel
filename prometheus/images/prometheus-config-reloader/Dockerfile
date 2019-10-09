@@ -1,0 +1,1 @@
+FROM quay.io/coreos/prometheus-config-reloader:v0.32.0
